@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://j-kangel.github.io/"/>
-  <updated>2019-03-23T11:39:01.326Z</updated>
+  <updated>2019-03-24T14:39:34.655Z</updated>
   <id>https://j-kangel.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>docker</title>
+    <link href="https://j-kangel.github.io/2019/03/25/docker/"/>
+    <id>https://j-kangel.github.io/2019/03/25/docker/</id>
+    <published>2019-03-24T20:11:21.000Z</published>
+    <updated>2019-03-24T14:39:34.655Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h3><h4 id="1、安装docker"><a href="#1、安装docker" class="headerlink" title="1、安装docker"></a>1、安装docker</h4><p>参照<a href="https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分">https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分</a></p><h3 id="二、搭建静态网页"><a href="#二、搭建静态网页" class="headerlink" title="二、搭建静态网页"></a>二、搭建静态网页</h3><h4 id="1、创建docker镜像"><a href="#1、创建docker镜像" class="headerlink" title="1、创建docker镜像"></a>1、创建docker镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器</span><br><span class="line">root@6f9c831d1d1b:/<span class="comment">#        //进入docker交互式容器</span></span><br></pre></td></tr></table></figure><h4 id="2、在docker中安装nginx和vim"><a href="#2、在docker中安装nginx和vim" class="headerlink" title="2、在docker中安装nginx和vim"></a>2、在docker中安装nginx和vim</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get update</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y nginx</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y vim</span></span><br></pre></td></tr></table></figure><h4 id="3、创建网页目录"><a href="#3、创建网页目录" class="headerlink" title="3、创建网页目录"></a>3、创建网页目录</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># mkdir -p /var/www/html</span></span><br></pre></td></tr></table></figure><h4 id="4、添加网页"><a href="#4、添加网页" class="headerlink" title="4、添加网页"></a>4、添加网页</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># cd /var/www/html</span></span><br><span class="line">root@6f9c831d1d1b:/var/www/html<span class="comment"># vim index.html</span></span><br></pre></td></tr></table></figure><p>在index.html中输入：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>nginx in docker<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">            Hello,World!</span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure><p>保存后退出，查看端口</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker port web</span><br></pre></td></tr></table></figure><p>显示如下：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">80/tcp -&gt; 0.0.0.0:32770</span><br></pre></td></tr></table></figure><h4 id="5、查看网页"><a href="#5、查看网页" class="headerlink" title="5、查看网页"></a>5、查看网页</h4><p>使用curl查看：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:32770     //32770为容器端口</span><br></pre></td></tr></table></figure><p>使用浏览器查看,如下图所示：</p><p><img src="/2019/03/25/docker/0.JPG" alt=""></p><h3 id="三、docker其他命令"><a href="#三、docker其他命令" class="headerlink" title="三、docker其他命令"></a>三、docker其他命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker attach web  //重新进入容器</span><br><span class="line">docker ps          //查看docker进程</span><br><span class="line">docker top web     //查看docker容器的进程</span><br><span class="line">docker inspect | grep -i IPaddress   //查看docker的ip地址</span><br><span class="line">docker inspect | grep -i hostport    //查看容器端口</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;一、环境准备&quot;&gt;&lt;a href=&quot;#一、环境准备&quot; class=&quot;headerlink&quot; title=&quot;一、环境准备&quot;&gt;&lt;/a&gt;一、环境准备&lt;/h3&gt;&lt;h4 id=&quot;1、安装docker&quot;&gt;&lt;a href=&quot;#1、安装docker&quot; class=&quot;headerli
+      
+    
+    </summary>
+    
+    
+      <category term="docker" scheme="https://j-kangel.github.io/tags/docker/"/>
+    
+  </entry>
   
   <entry>
     <title>Ubuntu 16.04 搭建hyperledger fabric 1.4</title>
