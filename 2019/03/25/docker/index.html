@@ -11,7 +11,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    <meta name="description" content="Life is beautiful!,"> 
+    <meta name="description" content="Life is beautiful!,一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分
+二、搭建静态网站1、创建docker,"> 
     <meta name="author" content="kangel"> 
     <link rel="alternative" href="atom.xml" title="KANGEL" type="application/atom+xml"> 
     <link rel="icon" href="/img/2.png"> 
@@ -26,7 +27,7 @@
     <div class="bar" style="width: 0;"></div>
     <a class="icon-home image-icon" href="javascript:;"></a>
     <div title="播放/暂停" class="icon-play"></div>
-    <h3 class="subtitle">docker</h3>
+    <h3 class="subtitle">使用docker部署静态网站</h3>
     <div class="social">
         <!--<div class="like-icon">-->
             <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -43,7 +44,7 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">docker</h1>
+        <h1 class="title">使用docker部署静态网站</h1>
         <div class="stuff">
             <span>三月 25, 2019</span>
             
@@ -53,7 +54,7 @@
         </div>
         <div class="content markdown">
             <h3 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h3><h4 id="1、安装docker"><a href="#1、安装docker" class="headerlink" title="1、安装docker"></a>1、安装docker</h4><p>参照<a href="https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分">https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分</a></p>
-<h3 id="二、搭建静态网页"><a href="#二、搭建静态网页" class="headerlink" title="二、搭建静态网页"></a>二、搭建静态网页</h3><h4 id="1、创建docker镜像"><a href="#1、创建docker镜像" class="headerlink" title="1、创建docker镜像"></a>1、创建docker镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器</span><br><span class="line">root@6f9c831d1d1b:/<span class="comment">#        //进入docker交互式容器</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、搭建静态网站"><a href="#二、搭建静态网站" class="headerlink" title="二、搭建静态网站"></a>二、搭建静态网站</h3><h4 id="1、创建docker镜像"><a href="#1、创建docker镜像" class="headerlink" title="1、创建docker镜像"></a>1、创建docker镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器</span><br><span class="line">root@6f9c831d1d1b:/<span class="comment">#        //进入docker交互式容器</span></span><br></pre></td></tr></table></figure>
 <h4 id="2、在docker中安装nginx和vim"><a href="#2、在docker中安装nginx和vim" class="headerlink" title="2、在docker中安装nginx和vim"></a>2、在docker中安装nginx和vim</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get update</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y nginx</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y vim</span></span><br></pre></td></tr></table></figure>
 <h4 id="3、创建网页目录"><a href="#3、创建网页目录" class="headerlink" title="3、创建网页目录"></a>3、创建网页目录</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># mkdir -p /var/www/html</span></span><br></pre></td></tr></table></figure>
 <h4 id="4、添加网页"><a href="#4、添加网页" class="headerlink" title="4、添加网页"></a>4、添加网页</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># cd /var/www/html</span></span><br><span class="line">root@6f9c831d1d1b:/var/www/html<span class="comment"># vim index.html</span></span><br></pre></td></tr></table></figure>
@@ -64,10 +65,10 @@
 <p>显示如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">80/tcp -&gt; 0.0.0.0:32770</span><br></pre></td></tr></table></figure>
 <h4 id="5、查看网页"><a href="#5、查看网页" class="headerlink" title="5、查看网页"></a>5、查看网页</h4><p>使用curl查看：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:32770     //32770为容器端口</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:32770     <span class="comment">#32770为容器端口</span></span><br></pre></td></tr></table></figure>
 <p>使用浏览器查看,如下图所示：</p>
 <p><img src="/2019/03/25/docker/0.JPG" alt=""></p>
-<h3 id="三、docker其他命令"><a href="#三、docker其他命令" class="headerlink" title="三、docker其他命令"></a>三、docker其他命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker attach web  //重新进入容器</span><br><span class="line">docker ps          //查看docker进程</span><br><span class="line">docker top web     //查看docker容器的进程</span><br><span class="line">docker inspect | grep -i IPaddress   //查看docker的ip地址</span><br><span class="line">docker inspect | grep -i hostport    //查看容器端口</span><br></pre></td></tr></table></figure>
+<h3 id="三、docker其他命令"><a href="#三、docker其他命令" class="headerlink" title="三、docker其他命令"></a>三、docker其他命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker attach web  <span class="comment">##重新进入容器</span></span><br><span class="line">docker ps          <span class="comment">##查看docker进程</span></span><br><span class="line">docker top web     <span class="comment">##查看docker容器的进程</span></span><br><span class="line">docker inspect | grep -i IPaddress   <span class="comment">##查看docker的ip地址</span></span><br><span class="line">docker inspect | grep -i hostport    <span class="comment">##查看容器端口</span></span><br></pre></td></tr></table></figure>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
