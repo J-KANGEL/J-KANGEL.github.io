@@ -97,7 +97,7 @@
 
 
   <meta name="description" content="hash原理（以MD5为例）原理浅析MD5算法输入消息以512bit的分组为单位处理（sha1、sha256也是如此），共64字节。然后对每个分组进行一次“加密”，前一次的“加密”结果会作为这一次“加密”的输入，最后一次“加密”结果即为最终MD5值。不足64字节的分组需要进行补位，也就是字节填充。 补位原则：首先将需要hash的字符串进行分组，即字符串长度（以字节为单位）整除64，最后一组不足56">
-<meta name="keywords" content="web,crypto,MD5,源码泄露,序列化">
+<meta name="keywords" content="crypto,web,MD5,源码泄露,序列化">
 <meta property="og:type" content="article">
 <meta property="og:title" content="hash长度扩展攻击">
 <meta property="og:url" content="https://j-kangel.github.io/2019/04/05/hash-attack/index.html">
@@ -528,9 +528,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/web/" rel="tag"><i class="fa fa-tag"></i>web</a>
-          
             <a href="/tags/crypto/" rel="tag"><i class="fa fa-tag"></i>crypto</a>
+          
+            <a href="/tags/web/" rel="tag"><i class="fa fa-tag"></i>web</a>
           
             <a href="/tags/MD5/" rel="tag"><i class="fa fa-tag"></i>MD5</a>
           
@@ -558,6 +558,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/07/sql注入之反引号/" rel="prev" title="sql注入之反引号">
+                sql注入之反引号 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -630,7 +634,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -657,7 +661,13 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">8</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -698,7 +708,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">12</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
