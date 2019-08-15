@@ -304,9 +304,9 @@
       
         <tags>
             
-            <tag> RC4 </tag>
-            
             <tag> crypto </tag>
+            
+            <tag> RC4 </tag>
             
         </tags>
       
@@ -387,9 +387,9 @@
       
         <tags>
             
-            <tag> crypto </tag>
-            
             <tag> web </tag>
+            
+            <tag> crypto </tag>
             
             <tag> MD5 </tag>
             
