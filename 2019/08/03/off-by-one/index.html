@@ -99,14 +99,14 @@
   <meta name="description" content="off-by-one 原理严格来说，off-by-one漏洞是一种特殊的溢出漏洞，指程序向缓冲区中写入时，写入的字节数超过了缓冲区本身的大小，并且只越界了一个字节。这种漏洞的产生往往与边界验证不严或字符串操作有关，当然也有可能写入的size正好就只多了一个字节：  使用循环语句向缓冲区中写入数据时，循环的次数设置错误导致多写入一个字节 字符串操作不合适，比如忽略了字符串末尾的\x00  一般而言，">
 <meta name="keywords" content="pwn">
 <meta property="og:type" content="article">
-<meta property="og:title" content="off-by-one">
+<meta property="og:title" content="PWN学习之off-by-one">
 <meta property="og:url" content="https://j-kangel.github.io/2019/08/03/off-by-one/index.html">
 <meta property="og:site_name" content="KANGEL">
 <meta property="og:description" content="off-by-one 原理严格来说，off-by-one漏洞是一种特殊的溢出漏洞，指程序向缓冲区中写入时，写入的字节数超过了缓冲区本身的大小，并且只越界了一个字节。这种漏洞的产生往往与边界验证不严或字符串操作有关，当然也有可能写入的size正好就只多了一个字节：  使用循环语句向缓冲区中写入数据时，循环的次数设置错误导致多写入一个字节 字符串操作不合适，比如忽略了字符串末尾的\x00  一般而言，">
 <meta property="og:locale" content="Chinese">
-<meta property="og:updated_time" content="2019-08-03T06:27:01.678Z">
+<meta property="og:updated_time" content="2019-08-16T08:05:32.338Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="off-by-one">
+<meta name="twitter:title" content="PWN学习之off-by-one">
 <meta name="twitter:description" content="off-by-one 原理严格来说，off-by-one漏洞是一种特殊的溢出漏洞，指程序向缓冲区中写入时，写入的字节数超过了缓冲区本身的大小，并且只越界了一个字节。这种漏洞的产生往往与边界验证不严或字符串操作有关，当然也有可能写入的size正好就只多了一个字节：  使用循环语句向缓冲区中写入数据时，循环的次数设置错误导致多写入一个字节 字符串操作不合适，比如忽略了字符串末尾的\x00  一般而言，">
 
 
@@ -127,7 +127,7 @@
   };
 </script>
 
-  <title>off-by-one | KANGEL</title>
+  <title>PWN学习之off-by-one | KANGEL</title>
   
 
 
@@ -343,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">off-by-one
+          <h1 class="post-title" itemprop="name headline">PWN学习之off-by-one
 
               
             
@@ -369,12 +369,24 @@
                 
               
 
-              <time title="Created: 2019-08-03 12:12:51 / Modified: 06:27:01" itemprop="dateCreated datePublished" datetime="2019-08-03T12:12:51Z">2019-08-03</time>
+              <time title="Created: 2019-08-03 12:12:51" itemprop="dateCreated datePublished" datetime="2019-08-03T12:12:51Z">2019-08-03</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-08-16 08:05:32" itemprop="dateModified" datetime="2019-08-16T08:05:32Z">2019-08-16</time>
               
             
           </span>
